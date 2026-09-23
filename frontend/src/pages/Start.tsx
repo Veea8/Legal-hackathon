@@ -122,10 +122,6 @@ export default function Start() {
           </div>
           <div className="dz-title">{busy === "upload" ? "Reading your form…" : "Drop your form definition here"}</div>
           <div className="dz-sub">or click to choose a file · CSV or XLSX</div>
-          <div className="dz-hint">
-            One row per field: <code>form_id, field_name, field_label, field_type, required, data_category,
-            purpose_text, retention_days, system_destination, third_party_shared</code>
-          </div>
         </div>
 
         <ConnectorRow

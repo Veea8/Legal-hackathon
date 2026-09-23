@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import { FEDLEX } from "../lib/lawLinks";
+import Onboarding from "./Onboarding";
 
 const STEPS = ["Form", "Context", "Decisions", "Export"];
 
@@ -15,6 +17,8 @@ export default function Layout() {
   const { pathname } = useLocation();
   const step = currentStep(pathname);
   const wide = pathname.endsWith("/review") || pathname.endsWith("/result") || pathname === "/about";
+  // Opens on every page load: first visit and every refresh.
+  const [tour, setTour] = useState(true);
 
   return (
     <div className="app">
@@ -46,6 +50,7 @@ export default function Layout() {
         <nav className="topnav" aria-label="Main">
           <NavLink to="/" end>New form</NavLink>
           <NavLink to="/about">How it works</NavLink>
+          <button type="button" className="navlink" onClick={() => setTour(true)}>Tour</button>
         </nav>
       </header>
 
@@ -90,6 +95,8 @@ export default function Layout() {
 
         <p className="foot-fine">minima · built at the Legal Hackathon 2026 · not legal advice</p>
       </footer>
+
+      {tour && <Onboarding onClose={() => setTour(false)} />}
     </div>
   );
 }
