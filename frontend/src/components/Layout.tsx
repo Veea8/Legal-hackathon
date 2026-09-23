@@ -92,8 +92,6 @@ export default function Layout() {
             </p>
           </section>
         </div>
-
-        <p className="foot-fine">minima · built at the Legal Hackathon 2026 · not legal advice</p>
       </footer>
 
       {tour && <Onboarding onClose={() => setTour(false)} />}

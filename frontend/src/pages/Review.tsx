@@ -172,12 +172,6 @@ export default function Review() {
     [flatOrder, schema, ruleById, checkById],
   );
 
-  const goToPending = useCallback(() => {
-    if (!firstUnresolved) return;
-    setActiveBucket(bucketOf(firstUnresolved));
-    setSelected(firstUnresolved);
-  }, [firstUnresolved, bucketOf]);
-
   // Once the assessment lands, open the bucket that actually holds the first decision.
   const jumped = useRef(false);
   useEffect(() => {
@@ -208,9 +202,6 @@ export default function Review() {
 
   const running = !ruleset || ruleset.status === "running";
   const total = schema.fields.length;
-  const signoffTotal = schema.fields.filter((field) => requiresSignoff(ruleById.get(field.field_id), checkById.get(field.field_id))).length;
-  const unresolved = schema.fields.filter((field) => isUnresolved(ruleById.get(field.field_id), checkById.get(field.field_id))).length;
-  const reviewed = signoffTotal - unresolved;
   const nErrors = ruleset ? Object.keys(ruleset.ai_errors).length : 0;
   const selectedField = schema.fields.find((field) => field.field_id === selected);
   const selectedRule = selectedField ? ruleById.get(selectedField.field_id) : undefined;
@@ -233,26 +224,17 @@ export default function Review() {
           ) : (
             <span className="tag tag-live">{ruleset?.cached ? "Cached assessment" : ruleset?.ai_model ?? "Checks only"}</span>
           )}
-          <button type="button" onClick={() => void applyRules()} disabled={busy || running || unresolved > 0}>
+          {/* Export is never gated on the sign-off count: some decisions are made through the
+              retention or wording controls rather than the Confirm button, and a stuck counter
+              must not trap anyone on this page. The banner below still reports what is open. */}
+          <button type="button" onClick={() => void applyRules()} disabled={busy || running}>
             {busy ? "Applying…" : "Apply and export →"}
           </button>
-          {!running && unresolved > 0 && (
-            <button type="button" className="submit-hint" onClick={goToPending}>
-              Review {unresolved} field{unresolved === 1 ? "" : "s"} to continue
-            </button>
-          )}
         </div>
       </header>
 
       {error && <div className="error" role="alert">{error}</div>}
 
-      {!running && ruleset && signoffTotal > 0 && (
-        <div className={`signoff-progress${unresolved === 0 ? " complete" : ""}`} role="status">
-          <span aria-hidden="true">{unresolved === 0 ? "✓" : "!"}</span>
-          <strong>{unresolved === 0 ? "All decisions reviewed" : `${unresolved} decision${unresolved === 1 ? "" : "s"} left`}</strong>
-          <small>{reviewed} of {signoffTotal} confirmed</small>
-        </div>
-      )}
 
       {nErrors > 0 && (
         <div className="review-notice" role="status">
@@ -290,14 +272,7 @@ export default function Review() {
               </header>
               <div className="field-list">
                 {(bucketed.get(activeBucket) ?? []).length === 0 ? (
-                  <p className="empty-bucket">
-                    No fields in this section.{" "}
-                    {firstUnresolved && (
-                      <button type="button" className="link" onClick={goToPending}>
-                        The {unresolved} open decision{unresolved === 1 ? " is" : "s are"} under {BUCKETS.find((bucket) => bucket.key === bucketOf(firstUnresolved))?.title}.
-                      </button>
-                    )}
-                  </p>
+                  <p className="empty-bucket">No fields in this section.</p>
                 ) : (
                   (bucketed.get(activeBucket) ?? []).map((field) => {
                       const rule = ruleById.get(field.field_id);
