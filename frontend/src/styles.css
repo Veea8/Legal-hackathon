@@ -272,7 +272,7 @@ button.block { width: 100%; }
 .wiz-card.upcoming { opacity: .5; }
 
 .wiz-done-row {
-  display: flex; align-items: center; gap: .7rem; width: 100%; text-align: left;
+  display: flex; align-items: center; justify-content: flex-start; gap: .7rem; width: 100%; text-align: left;
   background: none; border: none; color: inherit; padding: .7rem .95rem; font-weight: 400; font-size: .9rem;
 }
 .wiz-done-row:hover { background: var(--surface-2); }
@@ -339,7 +339,7 @@ button.block { width: 100%; }
 .group .g-title { color: var(--c); }
 .group.decide { box-shadow: 0 0 0 3px #fff7ed; }
 .group-head {
-  display: flex; align-items: center; gap: .65rem; width: 100%;
+  display: flex; align-items: center; justify-content: flex-start; gap: .65rem; width: 100%;
   background: none; border: none; color: inherit; text-align: left;
   padding: .8rem 1rem; font-weight: 400;
 }
@@ -356,7 +356,7 @@ button.block { width: 100%; }
 
 .field-list { border-top: 1px solid var(--line); }
 .field-row {
-  display: flex; align-items: center; gap: .6rem; width: 100%; text-align: left;
+  display: flex; align-items: center; flex-wrap: wrap; gap: .6rem; width: 100%; text-align: left;
   border-bottom: 1px solid var(--line); background: var(--surface); transition: background .1s;
   box-shadow: inset 3px 0 0 -1px var(--c, transparent);
 }
@@ -367,14 +367,19 @@ button.block { width: 100%; }
 
 /* The row is not one button any more: the label opens the drawer, the expiry control is its own. */
 .field-row .f-open {
-  flex: 1; min-width: 0; display: block; text-align: left; cursor: pointer;
+  flex: 1 1 15rem; min-width: 0; display: block; text-align: left; cursor: pointer;
   background: none; border: none; color: inherit; font-weight: 400; padding: .7rem .4rem .7rem 1rem;
 }
 .field-row .f-open:hover { background: none; }
 .field-row .f-label { display: block; font-size: .91rem; font-weight: 540; letter-spacing: -.005em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .field-row .f-meta { font-size: .77rem; color: var(--faint); display: flex; gap: .4rem; flex-wrap: wrap; margin-top: .1rem; }
 .field-row .f-meta code { white-space: nowrap; }
-.field-row .f-right { display: flex; align-items: center; gap: .45rem; flex: none; padding: .5rem 1rem .5rem 0; flex-wrap: wrap; justify-content: flex-end; }
+.field-row .f-right {
+  display: flex; align-items: center; gap: .45rem; flex: 0 1 auto; flex-wrap: wrap;
+  justify-content: flex-end; padding: .5rem 1rem .5rem 0; margin-left: auto;
+}
+/* When the badges wrap to their own line they should start under the label, not float right. */
+.field-row .f-right:not(:first-child) { padding-top: 0; }
 .field-row .chevron {
   color: var(--faint); font-size: .95rem; background: none; border: none; padding: .1rem .3rem;
   border-radius: 6px; cursor: pointer;
@@ -480,7 +485,8 @@ button.block { width: 100%; }
 
 .decide-list { display: flex; flex-direction: column; gap: .4rem; }
 .decide-opt {
-  display: flex; gap: .65rem; align-items: flex-start; width: 100%; text-align: left; cursor: pointer;
+  display: flex; gap: .65rem; align-items: flex-start; justify-content: flex-start;
+  width: 100%; text-align: left; cursor: pointer;
   background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: var(--r-sm);
   padding: .6rem .7rem; font-weight: 400; transition: all .12s;
 }
