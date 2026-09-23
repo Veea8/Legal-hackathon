@@ -29,3 +29,12 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+### Project
+backend/.env
+backend/.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+backend/eval/
+frontend/node_modules/
+frontend/dist/

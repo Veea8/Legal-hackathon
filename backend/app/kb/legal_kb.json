@@ -1,0 +1,170 @@
+[
+  {
+    "id": "gdpr-5-1-b",
+    "law": "gdpr",
+    "article": "Art. 5(1)(b)",
+    "title": "Purpose limitation",
+    "plain_summary": "Personal data may only be collected for specified, explicit and legitimate purposes and must not be used in a way incompatible with those purposes.",
+    "tags": ["purpose", "principle"]
+  },
+  {
+    "id": "gdpr-5-1-c",
+    "law": "gdpr",
+    "article": "Art. 5(1)(c)",
+    "title": "Data minimisation",
+    "plain_summary": "Data must be adequate, relevant and limited to what is necessary for the purpose. If a field is not needed for the stated purpose, it should not be collected.",
+    "tags": ["minimisation", "principle", "necessity"]
+  },
+  {
+    "id": "gdpr-5-1-e",
+    "law": "gdpr",
+    "article": "Art. 5(1)(e)",
+    "title": "Storage limitation",
+    "plain_summary": "Data may be kept in identifiable form only as long as necessary for the purpose. Retention periods need a justification.",
+    "tags": ["retention", "principle"]
+  },
+  {
+    "id": "gdpr-6",
+    "law": "gdpr",
+    "article": "Art. 6",
+    "title": "Lawful basis",
+    "plain_summary": "Every processing needs a legal basis: consent, contract, legal obligation, vital interests, public task or legitimate interests.",
+    "tags": ["legal_basis"]
+  },
+  {
+    "id": "gdpr-7-4",
+    "law": "gdpr",
+    "article": "Art. 7(4)",
+    "title": "Consent must not be bundled",
+    "plain_summary": "Consent is not freely given if using a service is made conditional on consenting to processing that is not necessary for that service.",
+    "tags": ["consent", "dark_patterns", "bundling"]
+  },
+  {
+    "id": "gdpr-9",
+    "law": "gdpr",
+    "article": "Art. 9(1)",
+    "title": "Special categories of data",
+    "plain_summary": "Processing data on health, religion, political opinions, ethnic origin, sexual orientation, trade-union membership, genetics or biometrics is prohibited by default.",
+    "tags": ["special_category", "health", "religion", "biometric"]
+  },
+  {
+    "id": "gdpr-9-2",
+    "law": "gdpr",
+    "article": "Art. 9(2)",
+    "title": "Exceptions for special categories",
+    "plain_summary": "Special-category data may be processed only under a listed exception, such as explicit consent, employment law obligations or provision of health care.",
+    "tags": ["special_category", "exception", "explicit_consent"]
+  },
+  {
+    "id": "gdpr-10",
+    "law": "gdpr",
+    "article": "Art. 10",
+    "title": "Criminal convictions and offences",
+    "plain_summary": "Data on criminal convictions and offences may only be processed under official authority or where specifically authorised by law with appropriate safeguards.",
+    "tags": ["criminal", "special_category"]
+  },
+  {
+    "id": "gdpr-13",
+    "law": "gdpr",
+    "article": "Art. 13",
+    "title": "Information to be provided",
+    "plain_summary": "When collecting data, people must be told the purposes, the legal basis, the recipients, the retention period and their rights, in clear language.",
+    "tags": ["transparency", "microcopy", "information"]
+  },
+  {
+    "id": "gdpr-13-1-e",
+    "law": "gdpr",
+    "article": "Art. 13(1)(e)",
+    "title": "Recipients must be named",
+    "plain_summary": "People must be told who receives their data, including third parties and processors, at the time of collection.",
+    "tags": ["transparency", "third_party", "recipients"]
+  },
+  {
+    "id": "gdpr-25",
+    "law": "gdpr",
+    "article": "Art. 25(1)",
+    "title": "Data protection by design",
+    "plain_summary": "Data protection must be built into systems and processes from the start, not added afterwards.",
+    "tags": ["by_design", "principle"]
+  },
+  {
+    "id": "gdpr-25-2",
+    "law": "gdpr",
+    "article": "Art. 25(2)",
+    "title": "Data protection by default",
+    "plain_summary": "By default only the data necessary for each specific purpose is processed. This covers how much is collected, how long it is kept and who can access it. Optional fields are the default, mandatory ones need a reason.",
+    "tags": ["by_default", "optional", "minimisation"]
+  },
+  {
+    "id": "gdpr-32",
+    "law": "gdpr",
+    "article": "Art. 32",
+    "title": "Security of processing",
+    "plain_summary": "Data must be protected with measures appropriate to the risk. High-risk items such as identity documents or bank details need stronger safeguards and a clear reason to be stored at all.",
+    "tags": ["security", "identity_document", "risk"]
+  },
+  {
+    "id": "fadp-5-c",
+    "law": "fadp",
+    "article": "Art. 5 let. c revFADP",
+    "title": "Sensitive personal data (Swiss definition)",
+    "plain_summary": "Sensitive data under Swiss law includes religious, philosophical, political or trade-union views; health; the intimate sphere; racial or ethnic origin; genetic and biometric data; administrative or criminal proceedings and sanctions; social assistance measures.",
+    "tags": ["special_category", "sensitive", "switzerland"]
+  },
+  {
+    "id": "fadp-6-2",
+    "law": "fadp",
+    "article": "Art. 6(2) revFADP",
+    "title": "Proportionality",
+    "plain_summary": "Processing must be lawful, in good faith and proportionate: only data that is suitable and necessary for the purpose may be processed.",
+    "tags": ["proportionality", "minimisation", "principle", "switzerland"]
+  },
+  {
+    "id": "fadp-6-3",
+    "law": "fadp",
+    "article": "Art. 6(3) revFADP",
+    "title": "Purpose must be recognisable",
+    "plain_summary": "Data may only be collected for a purpose that is recognisable to the person at the time of collection, and used compatibly with that purpose.",
+    "tags": ["purpose", "principle", "switzerland"]
+  },
+  {
+    "id": "fadp-6-4",
+    "law": "fadp",
+    "article": "Art. 6(4) revFADP",
+    "title": "Destroy or anonymise when no longer needed",
+    "plain_summary": "Personal data must be destroyed or anonymised as soon as it is no longer needed for the purpose of processing.",
+    "tags": ["retention", "switzerland"]
+  },
+  {
+    "id": "fadp-6-7",
+    "law": "fadp",
+    "article": "Art. 6(6)–(7) revFADP",
+    "title": "Valid and explicit consent",
+    "plain_summary": "Where consent is required it must be given voluntarily for specific processing after adequate information. For sensitive data the consent must be explicit.",
+    "tags": ["consent", "special_category", "switzerland"]
+  },
+  {
+    "id": "fadp-7",
+    "law": "fadp",
+    "article": "Art. 7 revFADP",
+    "title": "Privacy by design and by default",
+    "plain_summary": "Processing must be designed to respect data protection rules from the planning stage, and default settings must limit processing to the minimum required unless the person chooses otherwise.",
+    "tags": ["by_design", "by_default", "switzerland"]
+  },
+  {
+    "id": "fadp-8",
+    "law": "fadp",
+    "article": "Art. 8 revFADP",
+    "title": "Data security",
+    "plain_summary": "Adequate technical and organisational measures must ensure data security appropriate to the risk.",
+    "tags": ["security", "switzerland"]
+  },
+  {
+    "id": "fadp-19",
+    "law": "fadp",
+    "article": "Art. 19 revFADP",
+    "title": "Duty to inform",
+    "plain_summary": "When collecting personal data the controller must inform the person adequately: who the controller is, the purpose, and the recipients including any country the data goes to.",
+    "tags": ["transparency", "information", "third_party", "switzerland"]
+  }
+]
