@@ -1,0 +1,552 @@
+{
+  "form_id": "F003",
+  "status": "proposed",
+  "rules": [
+    {
+      "field_id": "bank_account",
+      "action": "keep",
+      "proposed_action": "keep",
+      "modifiers": [],
+      "alternative_action": null,
+      "source": "ai",
+      "check": {
+        "field_id": "bank_account",
+        "triggered": [
+          {
+            "rule_id": "C08",
+            "severity": "info",
+            "floor_action": "keep",
+            "alternative_action": null,
+            "modifiers": [],
+            "kb_refs": [
+              "gdpr-5-1-e",
+              "fadp-6-4"
+            ],
+            "message": "Retention of 3650 days (10.0 years) for sensitive data. Verify it against a legal retention duty; otherwise shorten."
+          }
+        ],
+        "floor_action": "keep",
+        "protected_inclusive": false
+      },
+      "ai": {
+        "field_id": "bank_account",
+        "inferred_category": "financial",
+        "special_category": false,
+        "necessity": "necessary",
+        "proposed_action": "keep",
+        "modifiers": [],
+        "alternative_action": null,
+        "reason": "Salary payment is a clear, necessary purpose for bank account details. Collect only what is needed for payroll and keep it no longer than necessary.",
+        "kb_refs": [
+          "gdpr-5-1-b",
+          "gdpr-5-1-c",
+          "gdpr-25-2"
+        ],
+        "microcopy": "We need your bank account details to pay your salary on time.",
+        "suggested_label": "Bank account for salary",
+        "retention_suggestion_days": 3650,
+        "data_handling": "retain",
+        "confidence": 0.95
+      },
+      "disagreement": false,
+      "ai_milder_suggestion": null,
+      "warning": null,
+      "reason": "Salary payment is a clear, necessary purpose for bank account details. Collect only what is needed for payroll and keep it no longer than necessary.",
+      "kb_refs": [
+        "gdpr-5-1-b",
+        "gdpr-5-1-c",
+        "gdpr-25-2",
+        "gdpr-5-1-e",
+        "fadp-6-4"
+      ],
+      "microcopy": "We need your bank account details to pay your salary on time.",
+      "suggested_label": "Bank account for salary",
+      "retention_days": 3650,
+      "data_handling": "retain",
+      "human_override": null
+    },
+    {
+      "field_id": "dietary_preferences",
+      "action": "remove",
+      "proposed_action": "remove",
+      "modifiers": [
+        "delay"
+      ],
+      "alternative_action": "better_explain",
+      "source": "both",
+      "check": {
+        "field_id": "dietary_preferences",
+        "triggered": [
+          {
+            "rule_id": "C02",
+            "severity": "block",
+            "floor_action": "remove",
+            "alternative_action": "better_explain",
+            "modifiers": [
+              "delay"
+            ],
+            "kb_refs": [
+              "gdpr-9",
+              "gdpr-5-1-c",
+              "fadp-5-c",
+              "fadp-6-3"
+            ],
+            "message": "Special-category data without a documented purpose must not be collected at this early stage."
+          },
+          {
+            "rule_id": "C04",
+            "severity": "warn",
+            "floor_action": "make_optional",
+            "alternative_action": null,
+            "modifiers": [],
+            "kb_refs": [
+              "gdpr-5-1-c",
+              "gdpr-25-2",
+              "fadp-6-2",
+              "fadp-7"
+            ],
+            "message": "Mandatory field without a documented purpose. Mandatory is not the default; it needs a reason."
+          },
+          {
+            "rule_id": "C06",
+            "severity": "warn",
+            "floor_action": "better_explain",
+            "alternative_action": null,
+            "modifiers": [],
+            "kb_refs": [
+              "gdpr-13-1-e",
+              "fadp-19"
+            ],
+            "message": "Shared with a third party without a documented purpose. Recipients must be named at collection."
+          }
+        ],
+        "floor_action": "remove",
+        "protected_inclusive": false
+      },
+      "ai": {
+        "field_id": "dietary_preferences",
+        "inferred_category": "health",
+        "special_category": true,
+        "necessity": "unnecessary",
+        "proposed_action": "remove",
+        "modifiers": [],
+        "alternative_action": null,
+        "reason": "No stated purpose for collecting dietary preferences at entry stage; health data requires explicit legal basis and clear necessity. Collecting it upfront violates data minimisation and purpose limitation.",
+        "kb_refs": [
+          "gdpr-5-1-b",
+          "gdpr-5-1-c",
+          "gdpr-9",
+          "gdpr-9-2",
+          "fadp-5-c",
+          "fadp-6-3"
+        ],
+        "microcopy": null,
+        "suggested_label": null,
+        "retention_suggestion_days": null,
+        "data_handling": "delete",
+        "confidence": 0.98
+      },
+      "disagreement": false,
+      "ai_milder_suggestion": null,
+      "warning": null,
+      "reason": "No stated purpose for collecting dietary preferences at entry stage; health data requires explicit legal basis and clear necessity. Collecting it upfront violates data minimisation and purpose limitation.",
+      "kb_refs": [
+        "gdpr-5-1-b",
+        "gdpr-5-1-c",
+        "gdpr-9",
+        "gdpr-9-2",
+        "fadp-5-c",
+        "fadp-6-3",
+        "gdpr-25-2",
+        "fadp-6-2",
+        "fadp-7",
+        "gdpr-13-1-e",
+        "fadp-19"
+      ],
+      "microcopy": null,
+      "suggested_label": null,
+      "retention_days": 365,
+      "data_handling": "delete",
+      "human_override": null
+    },
+    {
+      "field_id": "religion",
+      "action": "remove",
+      "proposed_action": "remove",
+      "modifiers": [
+        "delay"
+      ],
+      "alternative_action": "better_explain",
+      "source": "both",
+      "check": {
+        "field_id": "religion",
+        "triggered": [
+          {
+            "rule_id": "C02",
+            "severity": "block",
+            "floor_action": "remove",
+            "alternative_action": "better_explain",
+            "modifiers": [
+              "delay"
+            ],
+            "kb_refs": [
+              "gdpr-9",
+              "gdpr-5-1-c",
+              "fadp-5-c",
+              "fadp-6-3"
+            ],
+            "message": "Special-category data without a documented purpose must not be collected at this early stage."
+          },
+          {
+            "rule_id": "C04",
+            "severity": "warn",
+            "floor_action": "make_optional",
+            "alternative_action": null,
+            "modifiers": [],
+            "kb_refs": [
+              "gdpr-5-1-c",
+              "gdpr-25-2",
+              "fadp-6-2",
+              "fadp-7"
+            ],
+            "message": "Mandatory field without a documented purpose. Mandatory is not the default; it needs a reason."
+          },
+          {
+            "rule_id": "C06",
+            "severity": "warn",
+            "floor_action": "better_explain",
+            "alternative_action": null,
+            "modifiers": [],
+            "kb_refs": [
+              "gdpr-13-1-e",
+              "fadp-19"
+            ],
+            "message": "Shared with a third party without a documented purpose. Recipients must be named at collection."
+          },
+          {
+            "rule_id": "C08",
+            "severity": "info",
+            "floor_action": "keep",
+            "alternative_action": null,
+            "modifiers": [],
+            "kb_refs": [
+              "gdpr-5-1-e",
+              "fadp-6-4"
+            ],
+            "message": "Retention of 3650 days (10.0 years) for sensitive data. Verify it against a legal retention duty; otherwise shorten."
+          }
+        ],
+        "floor_action": "remove",
+        "protected_inclusive": false
+      },
+      "ai": {
+        "field_id": "religion",
+        "inferred_category": "special_category",
+        "special_category": true,
+        "necessity": "unnecessary",
+        "proposed_action": "remove",
+        "modifiers": [],
+        "alternative_action": null,
+        "reason": "No stated purpose for collecting religion data at entry stage; special-category data requires explicit legal basis and necessity. Collect only if later employment law or service provision requires it.",
+        "kb_refs": [
+          "gdpr-9",
+          "gdpr-9-2",
+          "fadp-5-c",
+          "fadp-6-3"
+        ],
+        "microcopy": null,
+        "suggested_label": null,
+        "retention_suggestion_days": null,
+        "data_handling": "delete",
+        "confidence": 0.98
+      },
+      "disagreement": false,
+      "ai_milder_suggestion": null,
+      "warning": null,
+      "reason": "No stated purpose for collecting religion data at entry stage; special-category data requires explicit legal basis and necessity. Collect only if later employment law or service provision requires it.",
+      "kb_refs": [
+        "gdpr-9",
+        "gdpr-9-2",
+        "fadp-5-c",
+        "fadp-6-3",
+        "gdpr-5-1-c",
+        "gdpr-25-2",
+        "fadp-6-2",
+        "fadp-7",
+        "gdpr-13-1-e",
+        "fadp-19",
+        "gdpr-5-1-e",
+        "fadp-6-4"
+      ],
+      "microcopy": null,
+      "suggested_label": null,
+      "retention_days": 3650,
+      "data_handling": "delete",
+      "human_override": null
+    },
+    {
+      "field_id": "home_address",
+      "action": "keep",
+      "proposed_action": "keep",
+      "modifiers": [],
+      "alternative_action": null,
+      "source": "ai",
+      "check": {
+        "field_id": "home_address",
+        "triggered": [],
+        "floor_action": "keep",
+        "protected_inclusive": false
+      },
+      "ai": {
+        "field_id": "home_address",
+        "inferred_category": "contact",
+        "special_category": false,
+        "necessity": "necessary",
+        "proposed_action": "keep",
+        "modifiers": [],
+        "alternative_action": null,
+        "reason": "Home address is necessary for employment records and correspondence; no special-category data collected here. Ensure retention aligns with employment duration and delete when no longer needed.",
+        "kb_refs": [
+          "gdpr-5-1-c",
+          "gdpr-25-2",
+          "fadp-6-2"
+        ],
+        "microcopy": "We need your home address to keep accurate employment records and send official correspondence; it is stored in HRIS and not shared externally.",
+        "suggested_label": null,
+        "retention_suggestion_days": null,
+        "data_handling": "retain",
+        "confidence": 0.95
+      },
+      "disagreement": false,
+      "ai_milder_suggestion": null,
+      "warning": null,
+      "reason": "Home address is necessary for employment records and correspondence; no special-category data collected here. Ensure retention aligns with employment duration and delete when no longer needed.",
+      "kb_refs": [
+        "gdpr-5-1-c",
+        "gdpr-25-2",
+        "fadp-6-2"
+      ],
+      "microcopy": "We need your home address to keep accurate employment records and send official correspondence; it is stored in HRIS and not shared externally.",
+      "suggested_label": null,
+      "retention_days": 3650,
+      "data_handling": "retain",
+      "human_override": null
+    },
+    {
+      "field_id": "photo_upload",
+      "action": "remove",
+      "proposed_action": "remove",
+      "modifiers": [],
+      "alternative_action": null,
+      "source": "both",
+      "check": {
+        "field_id": "photo_upload",
+        "triggered": [
+          {
+            "rule_id": "C05",
+            "severity": "warn",
+            "floor_action": "better_explain",
+            "alternative_action": null,
+            "modifiers": [],
+            "kb_refs": [
+              "gdpr-13",
+              "fadp-19"
+            ],
+            "message": "Optional but sensitive field without an explanation. People must be told why it is asked and that it is voluntary."
+          },
+          {
+            "rule_id": "C06",
+            "severity": "warn",
+            "floor_action": "better_explain",
+            "alternative_action": null,
+            "modifiers": [],
+            "kb_refs": [
+              "gdpr-13-1-e",
+              "fadp-19"
+            ],
+            "message": "Shared with a third party without a documented purpose. Recipients must be named at collection."
+          },
+          {
+            "rule_id": "C08",
+            "severity": "info",
+            "floor_action": "keep",
+            "alternative_action": null,
+            "modifiers": [],
+            "kb_refs": [
+              "gdpr-5-1-e",
+              "fadp-6-4"
+            ],
+            "message": "Retention of 3650 days (10.0 years) for sensitive data. Verify it against a legal retention duty; otherwise shorten."
+          }
+        ],
+        "floor_action": "better_explain",
+        "protected_inclusive": false
+      },
+      "ai": {
+        "field_id": "photo_upload",
+        "inferred_category": "biometric_adjacent",
+        "special_category": true,
+        "necessity": "unnecessary",
+        "proposed_action": "remove",
+        "modifiers": [],
+        "alternative_action": null,
+        "reason": "No stated purpose for a biometric-adjacent photo upload at entry stage; retention 3650 days and third-party sharing are disproportionate without a clear, necessary employment purpose.",
+        "kb_refs": [
+          "gdpr-9",
+          "gdpr-9-2",
+          "gdpr-25-2",
+          "fadp-5-c",
+          "fadp-6-2"
+        ],
+        "microcopy": null,
+        "suggested_label": null,
+        "retention_suggestion_days": null,
+        "data_handling": "delete",
+        "confidence": 0.98
+      },
+      "disagreement": false,
+      "ai_milder_suggestion": null,
+      "warning": null,
+      "reason": "No stated purpose for a biometric-adjacent photo upload at entry stage; retention 3650 days and third-party sharing are disproportionate without a clear, necessary employment purpose.",
+      "kb_refs": [
+        "gdpr-9",
+        "gdpr-9-2",
+        "gdpr-25-2",
+        "fadp-5-c",
+        "fadp-6-2",
+        "gdpr-13",
+        "fadp-19",
+        "gdpr-13-1-e",
+        "gdpr-5-1-e",
+        "fadp-6-4"
+      ],
+      "microcopy": null,
+      "suggested_label": null,
+      "retention_days": 3650,
+      "data_handling": "delete",
+      "human_override": null
+    },
+    {
+      "field_id": "gender",
+      "action": "make_optional",
+      "proposed_action": "make_optional",
+      "modifiers": [],
+      "alternative_action": "remove",
+      "source": "checks",
+      "check": {
+        "field_id": "gender",
+        "triggered": [
+          {
+            "rule_id": "C04",
+            "severity": "warn",
+            "floor_action": "make_optional",
+            "alternative_action": null,
+            "modifiers": [],
+            "kb_refs": [
+              "gdpr-5-1-c",
+              "gdpr-25-2",
+              "fadp-6-2",
+              "fadp-7"
+            ],
+            "message": "Mandatory field without a documented purpose. Mandatory is not the default; it needs a reason."
+          },
+          {
+            "rule_id": "C06",
+            "severity": "warn",
+            "floor_action": "better_explain",
+            "alternative_action": null,
+            "modifiers": [],
+            "kb_refs": [
+              "gdpr-13-1-e",
+              "fadp-19"
+            ],
+            "message": "Shared with a third party without a documented purpose. Recipients must be named at collection."
+          },
+          {
+            "rule_id": "C08",
+            "severity": "info",
+            "floor_action": "keep",
+            "alternative_action": null,
+            "modifiers": [],
+            "kb_refs": [
+              "gdpr-5-1-e",
+              "fadp-6-4"
+            ],
+            "message": "Retention of 3650 days (10.0 years) for sensitive data. Verify it against a legal retention duty; otherwise shorten."
+          },
+          {
+            "rule_id": "C10",
+            "severity": "warn",
+            "floor_action": "make_optional",
+            "alternative_action": "remove",
+            "modifiers": [],
+            "kb_refs": [
+              "gdpr-5-1-c",
+              "fadp-6-2"
+            ],
+            "message": "Identity-related field made mandatory without a purpose. At most optional, with inclusive options and 'prefer not to say'."
+          }
+        ],
+        "floor_action": "make_optional",
+        "protected_inclusive": false
+      },
+      "ai": {
+        "field_id": "gender",
+        "inferred_category": "special_category",
+        "special_category": true,
+        "necessity": "unclear",
+        "proposed_action": "better_explain",
+        "modifiers": [],
+        "alternative_action": null,
+        "reason": "Field is marked as special-category adjacent and required, but no purpose is stated. Under GDPR Art. 5(1)(b) and Art. 9(2), processing special-category data requires a clear, necessary purpose and a legal basis. Without this, the person cannot assess necessity or consent.",
+        "kb_refs": [
+          "gdpr-5-1-b",
+          "gdpr-9",
+          "gdpr-9-2",
+          "gdpr-13",
+          "fadp-5-c",
+          "fadp-6-3"
+        ],
+        "microcopy": "We ask for gender to ensure inclusive workplace policies and accurate records. It is stored in HRIS and never shared externally without your explicit consent.",
+        "suggested_label": "Gender",
+        "retention_suggestion_days": null,
+        "data_handling": "retain",
+        "confidence": 0.95
+      },
+      "disagreement": true,
+      "ai_milder_suggestion": {
+        "action": "better_explain",
+        "justification": "Field is marked as special-category adjacent and required, but no purpose is stated. Under GDPR Art. 5(1)(b) and Art. 9(2), processing special-category data requires a clear, necessary purpose and a legal basis. Without this, the person cannot assess necessity or consent."
+      },
+      "warning": null,
+      "reason": "Mandatory field without a documented purpose. Mandatory is not the default; it needs a reason. Identity-related field made mandatory without a purpose. At most optional, with inclusive options and 'prefer not to say'.",
+      "kb_refs": [
+        "gdpr-5-1-b",
+        "gdpr-9",
+        "gdpr-9-2",
+        "gdpr-13",
+        "fadp-5-c",
+        "fadp-6-3",
+        "gdpr-5-1-c",
+        "gdpr-25-2",
+        "fadp-6-2",
+        "fadp-7",
+        "gdpr-13-1-e",
+        "fadp-19",
+        "gdpr-5-1-e",
+        "fadp-6-4"
+      ],
+      "microcopy": "We ask for gender to ensure inclusive workplace policies and accurate records. It is stored in HRIS and never shared externally without your explicit consent.",
+      "suggested_label": "Gender",
+      "retention_days": 3650,
+      "data_handling": "retain",
+      "human_override": null
+    }
+  ],
+  "fields_done": 6,
+  "fields_total": 6,
+  "ai_model": "swiss-ai/Apertus-v1.5-70B",
+  "cached": true,
+  "computed_at": "2026-09-23T11:55:34.585953Z",
+  "ai_errors": {}
+}

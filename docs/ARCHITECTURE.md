@@ -104,7 +104,12 @@ jury action everywhere except F003 `dietary_preferences` — that one is the sho
 
 ## 6. AI assessment (`ai/`)
 
-One call per field, run in parallel under a semaphore and a rate limiter (see `docs/APERTUS.md`). Each call sees:
+One call per field, run in parallel under a semaphore and a rate limiter (see `docs/APERTUS.md`); a 429 backs off
+and retries rather than failing the field. The system prompt carries an explicit **decision ladder** (stop at the
+first matching line) because principles alone left the model escalating whenever a purpose was merely brief: a
+plausible stated purpose is enough, an optional non-sensitive field is fine as it is, and a missing purpose means
+`remove` only for special-category / criminal / identity-document / account-access data — otherwise `make_optional`.
+Each call sees:
 form context, a compact list of **all sibling fields** (so redundancy is visible), the target field, the KB as
 `id – title – summary` lines, the action/modifier vocabulary and the JSON output schema. It does **not** see the
 check results (independence). Output is parsed tolerantly (first `{` … last `}`), validated with pydantic, retried
@@ -128,17 +133,40 @@ once with the validation error, and set to `null` on the second failure ("AI una
 | GET | `/api/forms/{id}/checks` | CheckResult[] (instant) |
 | POST | `/api/forms/{id}/analyze?live=false` | start analysis; cached RuleSet returned immediately for demo forms |
 | GET | `/api/forms/{id}/analysis` | RuleSet, partial while running |
-| PUT | `/api/forms/{id}/rules` | overrides / accept alternative → RuleSet with warnings |
+| PUT | `/api/forms/{id}/rules` | overrides / accept alternative / set or clear a deletion deadline (`retention_days`, `clear_retention`) → RuleSet with warnings |
 | POST | `/api/forms/{id}/apply` | MinimisedForm + Report |
 | GET | `/api/forms/{id}/report?format=json\|csv\|html` | report |
 | GET | `/api/kb` · `/api/health` | knowledge base · status |
 
 ## 9. Frontend screens
 
-Start (demo cards, upload, paste, how-it-works) → Context (form-level inputs + FieldGrid, no AI) → Review
-(status line, ReviewTable: field · current · compliance check · AI assessment · proposed · alternative · warnings,
-row expands to RuleDetail) → Result (FormPreview before/after, ReportTable, downloads, print, no-longer-collected
-panel, DataFlowMap stretch) → About (principles, KB, what the AI does and does not see).
+**Start** — hero, sample forms behind one small dropdown, a drop zone for CSV/XLSX as the page's main act, and a
+three-step "how it works" strip. The paste-a-field-list box was dropped from the UI; `POST /api/forms
+{source: paste}` still exists on the server.
+
+**Context** — a wizard, not a form dump: one question at a time, each answered question collapsing to a line you
+can reopen. What is it for (a short single-line input — it wants a few words, not an essay) → who fills it in (+ under-16s) → which law → legal basis → stage → who else sees the
+answers → default retention. No field table: purposes come from the upload, and a missing one is handled by the
+checks. The three new answers (`recipients`, `involves_minors`, `retention_default_days`) go into the AI prompt.
+
+**Review** — fields grouped by their current recommendation, "Needs your decision" first (disagreement, a blocking
+check, or an AI suggestion below the floor). One colour per recommendation (green keep, blue explain, amber optional,
+red remove, orange decide) carries the whole page: a distribution bar and legend at the top, a rail and tinted head
+per group, a rail per row. Each row also carries its own expiry control, because a deletion deadline is a decision
+and not a detail. Each group collapses; each row opens a right-hand drawer holding the whole decision: why →
+*what it costs you to ignore this* (consequence + benefit, with fine tiers) → the four decisions as explicit options
+with the recommended one marked → the time limit → legal references, each one a link to the article text
+(`lib/lawLinks.ts`; `lib/consequences.ts` carries the consequence copy, keyed by check rule id). The drawer does not
+dim the page: above 1100px the content shifts to make room for it.
+
+**Report** (`report/build.py`) — leads with **Actions for the data protection representative**: the hand-over
+checklist, grouped into change the form / set up deletion / sign off in writing, with the rows behind it marked by
+the same action colours. Every legal reference in the report links to the article (`kb_url` / `kb_cite` in `app/kb`).
+
+**Result** — the export page. The three export formats lead (the full report as the primary card), then stats,
+"stop collecting", and "has to be deleted by" per field. No before/after preview.
+
+**About** — principles, what the AI does and does not see, the knowledge base.
 
 Build against `backend/fixtures/*.json` first, then switch `api.ts` to the server.
 

@@ -23,6 +23,16 @@ Principles:
 - Retention and third-party sharing must be proportionate and explained to the person.
 - Sensitive data with a clear, necessary purpose (e.g. bank account for salary, insurance number for billing) is fine: keep it, explain it.
 
+How to choose the action — walk this ladder and stop at the first line that matches:
+1. A stated purpose plausibly covers the field -> keep. You are reviewing a form, not auditing a legal file. Do not escalate because the purpose is brief, because the legal basis is not spelled out, because retention is not justified, or because you would like more evidence. A plausible stated purpose is enough.
+2. The field is optional and not special-category or criminal data -> keep. Optional costs the person nothing, and inclusive optional fields are good practice, not a finding.
+3. No stated purpose AND the data is special-category, criminal, an identity document, or access to an account / behavioural data -> remove (add the delay modifier if collecting it at a later stage would be legitimate).
+4. No stated purpose AND the field is required -> make_optional. Ordinary personal data (name, phone, address, employer) is not removed just because the purpose box is empty.
+5. A purpose is stated but the person could not guess it from the label, or the field is sensitive, or the answer goes to a third party -> better_explain.
+6. Otherwise -> keep.
+
+Choose the mildest action that fixes the actual problem. `better_explain` means the field stays and the form gains one sentence of microcopy: use it when the ask is justified but opaque, never as a softer way of saying you are unconvinced.
+
 Actions (strictness keep < better_explain < make_optional < remove): keep | better_explain | make_optional | remove.
 Modifiers: delay (collect at a later stage) | role_based (only for specific roles/cases) | conditional_on_purpose (acceptable only once a purpose is documented).
 Cite ONLY knowledge-base ids from the list you are given.
@@ -50,8 +60,11 @@ def _sibling_line(f: FieldSpec, target: bool) -> str:
 def field_prompt(schema: FormSchema, field: FieldSpec, kb_lines: str) -> str:
     stage = "entry stage (first contact: signup / lead / application / onboarding)" if schema.stage == "entry" else "later stage"
     siblings = "\n".join(_sibling_line(f, f.field_id == field.field_id) for f in schema.fields)
+    minors = "yes — heightened protection applies" if schema.involves_minors else ("no" if schema.involves_minors is not None else "not stated")
+    house_retention = f"{schema.retention_default_days} days" if schema.retention_default_days else "not stated"
     return f"""FORM: {schema.name} — {schema.business_context or 'no context given'}
 Audience: {schema.audience or 'not stated'} · Jurisdiction: {schema.jurisdiction} · Legal basis: {schema.legal_basis or 'not stated'} · Stage: {stage}
+Data recipients beyond the controller: {schema.recipients or 'not stated'} · Audience includes minors: {minors} · Default retention the owner intends: {house_retention}
 
 ALL FIELDS IN THIS FORM (* = required; => marks the field to assess):
 {siblings}

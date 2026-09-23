@@ -1,0 +1,339 @@
+{
+  "form_id": "F004",
+  "status": "proposed",
+  "rules": [
+    {
+      "field_id": "student_name",
+      "action": "keep",
+      "proposed_action": "keep",
+      "modifiers": [],
+      "alternative_action": null,
+      "source": "ai",
+      "check": {
+        "field_id": "student_name",
+        "triggered": [],
+        "floor_action": "keep",
+        "protected_inclusive": false
+      },
+      "ai": {
+        "field_id": "student_name",
+        "inferred_category": "personal",
+        "special_category": false,
+        "necessity": "necessary",
+        "proposed_action": "keep",
+        "modifiers": [],
+        "alternative_action": null,
+        "reason": "Full legal name is essential to identify the applicant and link their application to records; no special-category data is collected here.",
+        "kb_refs": [
+          "gdpr-5-1-b",
+          "gdpr-13"
+        ],
+        "microcopy": "We need your full legal name to identify you and match your application to your records.",
+        "suggested_label": null,
+        "retention_suggestion_days": null,
+        "data_handling": "retain",
+        "confidence": 0.95
+      },
+      "disagreement": false,
+      "ai_milder_suggestion": null,
+      "warning": null,
+      "reason": "Full legal name is essential to identify the applicant and link their application to records; no special-category data is collected here.",
+      "kb_refs": [
+        "gdpr-5-1-b",
+        "gdpr-13"
+      ],
+      "microcopy": "We need your full legal name to identify you and match your application to your records.",
+      "suggested_label": null,
+      "retention_days": 2555,
+      "data_handling": "retain",
+      "human_override": null
+    },
+    {
+      "field_id": "household_income",
+      "action": "keep",
+      "proposed_action": "keep",
+      "modifiers": [],
+      "alternative_action": null,
+      "source": "ai",
+      "check": {
+        "field_id": "household_income",
+        "triggered": [
+          {
+            "rule_id": "C08",
+            "severity": "info",
+            "floor_action": "keep",
+            "alternative_action": null,
+            "modifiers": [],
+            "kb_refs": [
+              "gdpr-5-1-e",
+              "fadp-6-4"
+            ],
+            "message": "Retention of 2555 days (7.0 years) for sensitive data. Verify it against a legal retention duty; otherwise shorten."
+          }
+        ],
+        "floor_action": "keep",
+        "protected_inclusive": false
+      },
+      "ai": {
+        "field_id": "household_income",
+        "inferred_category": "financial",
+        "special_category": false,
+        "necessity": "necessary",
+        "proposed_action": "keep",
+        "modifiers": [],
+        "alternative_action": null,
+        "reason": "Household income is directly relevant to assessing need-based aid eligibility; no less intrusive way exists to determine financial need at entry stage.",
+        "kb_refs": [
+          "gdpr-5-1-c",
+          "gdpr-6",
+          "fadp-6-2"
+        ],
+        "microcopy": "We ask for household income to fairly assess your eligibility for need-based scholarship support.",
+        "suggested_label": "Household income for aid assessment",
+        "retention_suggestion_days": 2555,
+        "data_handling": "retain",
+        "confidence": 0.95
+      },
+      "disagreement": false,
+      "ai_milder_suggestion": null,
+      "warning": null,
+      "reason": "Household income is directly relevant to assessing need-based aid eligibility; no less intrusive way exists to determine financial need at entry stage.",
+      "kb_refs": [
+        "gdpr-5-1-c",
+        "gdpr-6",
+        "fadp-6-2",
+        "gdpr-5-1-e",
+        "fadp-6-4"
+      ],
+      "microcopy": "We ask for household income to fairly assess your eligibility for need-based scholarship support.",
+      "suggested_label": "Household income for aid assessment",
+      "retention_days": 2555,
+      "data_handling": "retain",
+      "human_override": null
+    },
+    {
+      "field_id": "parent_occupation",
+      "action": "make_optional",
+      "proposed_action": "make_optional",
+      "modifiers": [],
+      "alternative_action": null,
+      "source": "checks",
+      "check": {
+        "field_id": "parent_occupation",
+        "triggered": [
+          {
+            "rule_id": "C04",
+            "severity": "warn",
+            "floor_action": "make_optional",
+            "alternative_action": null,
+            "modifiers": [],
+            "kb_refs": [
+              "gdpr-5-1-c",
+              "gdpr-25-2",
+              "fadp-6-2",
+              "fadp-7"
+            ],
+            "message": "Mandatory field without a documented purpose. Mandatory is not the default; it needs a reason."
+          },
+          {
+            "rule_id": "C06",
+            "severity": "warn",
+            "floor_action": "better_explain",
+            "alternative_action": null,
+            "modifiers": [],
+            "kb_refs": [
+              "gdpr-13-1-e",
+              "fadp-19"
+            ],
+            "message": "Shared with a third party without a documented purpose. Recipients must be named at collection."
+          },
+          {
+            "rule_id": "C08",
+            "severity": "info",
+            "floor_action": "keep",
+            "alternative_action": null,
+            "modifiers": [],
+            "kb_refs": [
+              "gdpr-5-1-e",
+              "fadp-6-4"
+            ],
+            "message": "Retention of 2555 days (7.0 years) for sensitive data. Verify it against a legal retention duty; otherwise shorten."
+          }
+        ],
+        "floor_action": "make_optional",
+        "protected_inclusive": false
+      },
+      "ai": {
+        "field_id": "parent_occupation",
+        "inferred_category": "special_category",
+        "special_category": true,
+        "necessity": "unclear",
+        "proposed_action": "better_explain",
+        "modifiers": [],
+        "alternative_action": null,
+        "reason": "No stated purpose for collecting parent occupation, which is sensitive personal data collected at entry stage and shared with third parties. Without a clear, necessary purpose and legal basis, the field violates purpose limitation and data minimisation.",
+        "kb_refs": [
+          "gdpr-5-1-b",
+          "gdpr-5-1-c",
+          "gdpr-9",
+          "gdpr-9-2",
+          "fadp-5-c",
+          "fadp-6-3"
+        ],
+        "microcopy": "We ask for your parent's occupation to assess financial need for the scholarship. This information is kept for the duration of the application process and shared only with the scholarship committee and financial aid partners.",
+        "suggested_label": "Parent occupation (for financial eligibility assessment)",
+        "retention_suggestion_days": null,
+        "data_handling": "retain",
+        "confidence": 0.95
+      },
+      "disagreement": true,
+      "ai_milder_suggestion": {
+        "action": "better_explain",
+        "justification": "No stated purpose for collecting parent occupation, which is sensitive personal data collected at entry stage and shared with third parties. Without a clear, necessary purpose and legal basis, the field violates purpose limitation and data minimisation."
+      },
+      "warning": null,
+      "reason": "Mandatory field without a documented purpose. Mandatory is not the default; it needs a reason.",
+      "kb_refs": [
+        "gdpr-5-1-b",
+        "gdpr-5-1-c",
+        "gdpr-9",
+        "gdpr-9-2",
+        "fadp-5-c",
+        "fadp-6-3",
+        "gdpr-25-2",
+        "fadp-6-2",
+        "fadp-7",
+        "gdpr-13-1-e",
+        "fadp-19",
+        "gdpr-5-1-e",
+        "fadp-6-4"
+      ],
+      "microcopy": "We ask for your parent's occupation to assess financial need for the scholarship. This information is kept for the duration of the application process and shared only with the scholarship committee and financial aid partners.",
+      "suggested_label": "Parent occupation (for financial eligibility assessment)",
+      "retention_days": 2555,
+      "data_handling": "retain",
+      "human_override": null
+    },
+    {
+      "field_id": "migration_status",
+      "action": "make_optional",
+      "proposed_action": "make_optional",
+      "modifiers": [],
+      "alternative_action": "remove",
+      "source": "checks",
+      "check": {
+        "field_id": "migration_status",
+        "triggered": [
+          {
+            "rule_id": "C04",
+            "severity": "warn",
+            "floor_action": "make_optional",
+            "alternative_action": null,
+            "modifiers": [],
+            "kb_refs": [
+              "gdpr-5-1-c",
+              "gdpr-25-2",
+              "fadp-6-2",
+              "fadp-7"
+            ],
+            "message": "Mandatory field without a documented purpose. Mandatory is not the default; it needs a reason."
+          },
+          {
+            "rule_id": "C06",
+            "severity": "warn",
+            "floor_action": "better_explain",
+            "alternative_action": null,
+            "modifiers": [],
+            "kb_refs": [
+              "gdpr-13-1-e",
+              "fadp-19"
+            ],
+            "message": "Shared with a third party without a documented purpose. Recipients must be named at collection."
+          },
+          {
+            "rule_id": "C08",
+            "severity": "info",
+            "floor_action": "keep",
+            "alternative_action": null,
+            "modifiers": [],
+            "kb_refs": [
+              "gdpr-5-1-e",
+              "fadp-6-4"
+            ],
+            "message": "Retention of 2555 days (7.0 years) for sensitive data. Verify it against a legal retention duty; otherwise shorten."
+          },
+          {
+            "rule_id": "C10",
+            "severity": "warn",
+            "floor_action": "make_optional",
+            "alternative_action": "remove",
+            "modifiers": [],
+            "kb_refs": [
+              "gdpr-5-1-c",
+              "fadp-6-2"
+            ],
+            "message": "Identity-related field made mandatory without a purpose. At most optional, with inclusive options and 'prefer not to say'."
+          }
+        ],
+        "floor_action": "make_optional",
+        "protected_inclusive": false
+      },
+      "ai": {
+        "field_id": "migration_status",
+        "inferred_category": "special_category",
+        "special_category": true,
+        "necessity": "unclear",
+        "proposed_action": "better_explain",
+        "modifiers": [],
+        "alternative_action": null,
+        "reason": "No stated purpose for migration_status, yet it is marked as special-category data, required, and shared with third parties. Without a clear, necessary purpose and legal basis, the field violates purpose limitation and data minimisation.",
+        "kb_refs": [
+          "gdpr-5-1-b",
+          "gdpr-5-1-c",
+          "gdpr-9",
+          "gdpr-9-2",
+          "fadp-5-c",
+          "fadp-6-3"
+        ],
+        "microcopy": "We ask for your migration status to determine if you qualify for additional need-based support. This data is kept only for scholarship administration and shared only with the relevant assessment body.",
+        "suggested_label": "Migration status for eligibility assessment",
+        "retention_suggestion_days": null,
+        "data_handling": "retain",
+        "confidence": 0.95
+      },
+      "disagreement": true,
+      "ai_milder_suggestion": {
+        "action": "better_explain",
+        "justification": "No stated purpose for migration_status, yet it is marked as special-category data, required, and shared with third parties. Without a clear, necessary purpose and legal basis, the field violates purpose limitation and data minimisation."
+      },
+      "warning": null,
+      "reason": "Mandatory field without a documented purpose. Mandatory is not the default; it needs a reason. Identity-related field made mandatory without a purpose. At most optional, with inclusive options and 'prefer not to say'.",
+      "kb_refs": [
+        "gdpr-5-1-b",
+        "gdpr-5-1-c",
+        "gdpr-9",
+        "gdpr-9-2",
+        "fadp-5-c",
+        "fadp-6-3",
+        "gdpr-25-2",
+        "fadp-6-2",
+        "fadp-7",
+        "gdpr-13-1-e",
+        "fadp-19",
+        "gdpr-5-1-e",
+        "fadp-6-4"
+      ],
+      "microcopy": "We ask for your migration status to determine if you qualify for additional need-based support. This data is kept only for scholarship administration and shared only with the relevant assessment body.",
+      "suggested_label": "Migration status for eligibility assessment",
+      "retention_days": 2555,
+      "data_handling": "retain",
+      "human_override": null
+    }
+  ],
+  "fields_done": 4,
+  "fields_total": 4,
+  "ai_model": "swiss-ai/Apertus-v1.5-70B",
+  "cached": true,
+  "computed_at": "2026-09-23T11:55:42.502115Z",
+  "ai_errors": {}
+}

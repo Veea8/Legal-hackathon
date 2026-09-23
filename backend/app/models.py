@@ -96,6 +96,10 @@ class FormSchema(BaseModel):
     legal_basis: Optional[LegalBasis] = None
     stage: Stage = "entry"
     source: Source = "demo"
+    # Answered in the context wizard; all optional so older payloads keep working.
+    recipients: Optional[str] = None  # who else sees the data (processors, third parties)
+    involves_minors: Optional[bool] = None  # audience includes people under 16
+    retention_default_days: Optional[int] = None  # house rule for "how long may we keep it"
     fields: list[FieldSpec] = Field(default_factory=list)
 
     def field(self, field_id: str) -> Optional[FieldSpec]:
@@ -266,6 +270,7 @@ class ReportRow(BaseModel):
     owner_decision: str  # "accepted proposal" | "override: keep (note)" | "accepted AI suggestion" ...
     warning: Optional[str] = None
     retention_days: Optional[int] = None
+    delete_by: Optional[str] = None  # ISO date: field must be deleted by then
     data_handling: DataHandling = "retain"
 
 
@@ -328,6 +333,8 @@ class RuleOverride(BaseModel):
     action: Optional[Action] = None  # explicit override
     accept_alternative: bool = False  # take alternative_action
     accept_ai_suggestion: bool = False  # take ai_milder_suggestion
+    retention_days: Optional[int] = Field(None, ge=1, le=36500)  # set a deletion deadline
+    clear_retention: bool = False  # drop the deadline again
     note: str = ""
 
 

@@ -51,18 +51,35 @@ docker run -p 8000:8000 --env-file backend/.env data-minimiser   # open http://l
 
 ## Status (23 Sep 2026)
 
-Built and verified: loader, knowledge base, compliance checks, AI module (offline-tested), merge,
-engine, report, API, React frontend (production build served by the backend), 26 backend tests,
-checks-only eval (flag 29/29, lenient 27/29 against the jury labels).
-Not yet verified: the Dockerfile (the Docker daemon was not running when it was written) and any
-live Apertus call (no key in `backend/.env` yet).
+Built and verified: loader, knowledge base, compliance checks, AI module, merge, engine, report, API,
+React frontend (production build served by the backend), 26 backend tests. The Apertus key is in
+`backend/.env` (gitignored) and live: all five demo forms are precomputed into `app/cache/`.
 
-Still to do on the day, in order:
-1. Put the Swisscom key in `backend/.env`, run `scripts/benchmark_apertus.py`.
-2. Run `scripts/precompute_demo.py`, then `scripts/eval.py --cached`; iterate on `app/ai/prompts.py` if needed.
-3. Commit `backend/app/cache/*.json` so graders get instant results.
-4. Deploy the Docker image somewhere public; check that ports 8000 / 5173 are free locally before a live demo.
-5. Stretch: paste-to-schema UI polish, data-flow diagram, record minimisation module (`engine/records.py`).
+**Eval standing (29 jury-labelled fields, targets lenient ≥ 25, flag ≥ 27):**
+
+| run | flag acc | lenient |
+|---|---|---|
+| checks only | **29/29** | **27/29** |
+| checks + AI, before the decision ladder | 22/29 | 18/29 |
+| checks + AI, now | **28/29** | **25/29** |
+
+The deterministic checks alone clear both targets. The AI was *lowering* the score: it escalated any
+field whose stated purpose was merely brief, and the merge rule takes the stricter of the two. Stating
+principles in `SYSTEM_PROMPT` did not change that; an ordered **decision ladder** ("stop at the first
+matching line") did. The four remaining misses are judgement calls where we come out stricter than the
+jury — deliberately left alone rather than over-fitted to 29 labels; the decision drawer is where a
+human softens them.
+
+After any prompt change: `scripts/eval.py --live`, then `scripts/precompute_demo.py`, or the demo serves
+the old assessments from `app/cache/`.
+
+Not yet verified: the Dockerfile (the Docker daemon was not running when it was written).
+
+Still to do, in order:
+1. Close the AI eval gap against the checks-only baseline (`app/ai/prompts.py`, then `scripts/eval.py --live`).
+2. Commit `backend/app/cache/*.json` so graders get instant results.
+3. Deploy the Docker image somewhere public; check that ports 8000 / 5173 are free locally before a live demo.
+4. Stretch: record minimisation module (`engine/records.py`), paste-to-schema UI (the API endpoint exists, the screen does not).
 
 ## Repository layout
 

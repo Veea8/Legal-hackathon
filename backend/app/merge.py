@@ -173,6 +173,18 @@ def _flag_text(check: CheckResult) -> str:
     return ", ".join(ids) if ids else "compliance check"
 
 
+def _apply_retention(rule: FieldRule, o: RuleOverride) -> None:
+    """A deletion deadline set by the human. `expire` marks the field as time-limited in the report."""
+    if o.clear_retention:
+        rule.retention_days = None
+        if rule.data_handling == "expire":
+            rule.data_handling = "delete" if rule.action == Action.remove else "retain"
+    elif o.retention_days is not None:
+        rule.retention_days = o.retention_days
+        if rule.action != Action.remove:
+            rule.data_handling = "expire"
+
+
 def apply_overrides(ruleset: RuleSet, overrides: list[RuleOverride]) -> RuleSet:
     """Apply human decisions in place and return the ruleset. Raises OverrideError on invalid input."""
     for o in overrides:
@@ -180,6 +192,7 @@ def apply_overrides(ruleset: RuleSet, overrides: list[RuleOverride]) -> RuleSet:
         if rule is None:
             raise OverrideError(f"Unknown field '{o.field_id}'")
         floor = rule.check.floor_action
+        retention_touched = o.clear_retention or o.retention_days is not None
 
         if o.accept_ai_suggestion:
             if rule.ai_milder_suggestion is None:
@@ -212,6 +225,10 @@ def apply_overrides(ruleset: RuleSet, overrides: list[RuleOverride]) -> RuleSet:
                 f"Owner keeps a field the compliance check flags ({_flag_text(rule.check)}): "
                 f"'{new_action.value}' is milder than the floor '{floor.value}'."
             )
+        elif retention_touched:
+            # deadline only: the action stands as it is
+            _apply_retention(rule, o)
+            continue
         else:
             # reset to the merged proposal
             rule.action = rule.proposed_action
@@ -227,5 +244,6 @@ def apply_overrides(ruleset: RuleSet, overrides: list[RuleOverride]) -> RuleSet:
         rule.data_handling = "delete" if new_action == Action.remove else (
             rule.ai.data_handling if rule.ai else "retain"
         )
+        _apply_retention(rule, o)
     ruleset.status = "reviewed"
     return ruleset

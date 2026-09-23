@@ -8,7 +8,7 @@ Source: https://zh.ai-weeks.ch/tools/swisscom-hacker-guide
 | Model id | `swiss-ai/Apertus-v1.5-70B` |
 | Auth | `Authorization: Bearer <key>` — the key is used directly, no OAuth exchange |
 | Key source | "The Keymaker" portal → select Swisscom → the email you registered with on Luma → key arrives by mail |
-| Rate limit | 5 requests/s → we run at most 4 concurrent calls and ≤ 4 req/s (`AI_CONCURRENCY`, `AI_MAX_RPS`) |
+| Rate limit | Documented as 5 req/s, but 4 concurrent calls got HTTP 429 in practice. We run 2 concurrent at ≤ 2 req/s (`AI_CONCURRENCY`, `AI_MAX_RPS`) and back off on a 429 (`AI_RATE_RETRIES`, `AI_RATE_BACKOFF_S`) |
 | Budgets | 10,000,000 input tokens, 2,500,000 output tokens per key. One eval run over the 29 fields ≈ 45k in / 9k out |
 | Context | up to 262,144 tokens; streaming supported |
 | Caveat | The guide says "Authorization Bearer expires in 60 minutes". It is unclear whether the key itself expires. `scripts/benchmark_apertus.py` checks this at the start of the day. If keys really expire hourly: re-issue via the Keymaker mail and update `.env`; the client re-reads the key on a 401 without a restart. |

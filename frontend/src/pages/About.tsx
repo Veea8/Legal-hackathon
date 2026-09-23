@@ -15,35 +15,49 @@ export default function About() {
 
   return (
     <>
-      <h1>About</h1>
-      <section className="panel">
-        <h2>Principles</h2>
-        <ul className="plain">
-          <li><b>Data minimisation by design.</b> Every field needs a purpose. Mandatory is not the default.</li>
-          <li><b>Rules, not magic.</b> Compliance checks are deterministic code you can read. They set a floor the proposal never goes below.</li>
-          <li><b>AI for judgement, constrained.</b> The AI assesses necessity and proportionality, writes reasons and microcopy, and may only cite the knowledge base below.</li>
-          <li><b>Humans decide.</b> Every proposal is reviewable. Decisions below the floor need a note and appear in the report.</li>
-          <li><b>Inclusive optional fields are not penalised.</b> Preferred name, pronouns, language, accessibility needs: fine when optional and explained.</li>
-        </ul>
+      <section className="hero" style={{ textAlign: "left", margin: "0 0 2rem" }}>
+        <h1>How it works</h1>
+        <p>An AI writes rules. It never touches your data. A deterministic engine applies them. You decide everything in between.</p>
       </section>
+
+      <div className="how" style={{ margin: "0 0 2rem", maxWidth: "none" }}>
+        <div className="how-item">
+          <div className="n">1</div>
+          <h3>Checks set the floor</h3>
+          <p>Eleven deterministic checks encode the invariants: special categories, mandatory fields without a purpose,
+            undisclosed sharing, identity documents, retention. They are plain code, not a prompt.</p>
+        </div>
+        <div className="how-item">
+          <div className="n">2</div>
+          <h3>The AI judges necessity</h3>
+          <p>Separately, and without seeing the check results, the assessment weighs each field against the purpose and
+            its siblings. When it is milder than the floor, the floor wins and the disagreement is surfaced to you.</p>
+        </div>
+        <div className="how-item">
+          <div className="n">3</div>
+          <h3>The engine applies</h3>
+          <p>Your decisions go through deterministic code — remove, make optional, attach the explanation, set the
+            deletion deadline — and out as a report. Same input, same output, every time.</p>
+        </div>
+      </div>
 
       <section className="panel">
         <h2>What the AI sees, and what it never sees</h2>
-        <div className="two-col">
+        <div className="two-col" style={{ marginTop: ".75rem" }}>
           <div>
             <h4>Sees</h4>
             <ul className="plain">
               <li>Field names, labels and types</li>
-              <li>Stated purposes, retention, destination systems, third-party sharing</li>
-              <li>The business context you enter</li>
-              <li>The legal knowledge base below</li>
+              <li>Stated purposes, retention, destinations, third-party sharing</li>
+              <li>The context you entered</li>
+              <li>The knowledge base below — and it may cite nothing else</li>
             </ul>
           </div>
           <div>
             <h4>Never sees</h4>
             <ul className="plain">
-              <li>Data values of any kind: not one record, not one row</li>
-              <li>The compliance check results (the two assessments are independent)</li>
+              <li>Data values of any kind. Not one record, not one row.</li>
+              <li>The compliance check results — the two assessments stay independent on purpose</li>
             </ul>
           </div>
         </div>
@@ -51,28 +65,38 @@ export default function About() {
 
       <section className="panel">
         <h2>Legal knowledge base</h2>
-        <p className="muted">
-          The EU General Data Protection Regulation (GDPR) and the revised Swiss Federal Act on Data Protection
-          (revFADP, in force since 1 September 2023). Summaries are plain-language paraphrases, not the legal text.
+        <p className="muted small">
+          The EU General Data Protection Regulation and the revised Swiss Federal Act on Data Protection (revFADP,
+          in force since 1 September 2023). Summaries are plain-language paraphrases, not the legal text.
         </p>
         {error && <div className="error">{error}</div>}
-        <div className="two-col">
+        <div className="kb-grid" style={{ marginTop: "1rem" }}>
           <div>
-            <h3>GDPR</h3>
-            <dl className="kb-list">
-              {gdpr.map((e) => (<div key={e.id}><dt>{e.article} — {e.title}</dt><dd>{e.plain_summary}</dd></div>))}
+            <h4>GDPR</h4>
+            <dl style={{ margin: 0 }}>
+              {gdpr.map((e) => (
+                <div key={e.id} className="kb-entry">
+                  <dt>{e.article} — {e.title}</dt>
+                  <dd>{e.plain_summary}</dd>
+                </div>
+              ))}
             </dl>
           </div>
           <div>
-            <h3>revFADP</h3>
-            <dl className="kb-list">
-              {fadp.map((e) => (<div key={e.id}><dt>{e.article} — {e.title}</dt><dd>{e.plain_summary}</dd></div>))}
+            <h4>revFADP</h4>
+            <dl style={{ margin: 0 }}>
+              {fadp.map((e) => (
+                <div key={e.id} className="kb-entry">
+                  <dt>{e.article} — {e.title}</dt>
+                  <dd>{e.plain_summary}</dd>
+                </div>
+              ))}
             </dl>
           </div>
         </div>
       </section>
 
-      <p className="muted small">
+      <p className="tiny faint" style={{ marginTop: "1.5rem" }}>
         This tool supports privacy-by-design reviews. It is not legal advice and does not replace a review by a qualified professional.
       </p>
     </>

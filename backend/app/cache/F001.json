@@ -1,0 +1,616 @@
+{
+  "form_id": "F001",
+  "status": "proposed",
+  "rules": [
+    {
+      "field_id": "first_name",
+      "action": "keep",
+      "proposed_action": "keep",
+      "modifiers": [],
+      "alternative_action": null,
+      "source": "ai",
+      "check": {
+        "field_id": "first_name",
+        "triggered": [],
+        "floor_action": "keep",
+        "protected_inclusive": false
+      },
+      "ai": {
+        "field_id": "first_name",
+        "inferred_category": "personal",
+        "special_category": false,
+        "necessity": "necessary",
+        "proposed_action": "keep",
+        "modifiers": [],
+        "alternative_action": null,
+        "reason": "Field is required to create and manage the user account, which is a core function of the telehealth app. No special-category data is collected here.",
+        "kb_refs": [
+          "gdpr-5-1-b",
+          "gdpr-25-2"
+        ],
+        "microcopy": "We need your first name to create your account and ensure we address you correctly throughout the app.",
+        "suggested_label": null,
+        "retention_suggestion_days": null,
+        "data_handling": "retain",
+        "confidence": 0.95
+      },
+      "disagreement": false,
+      "ai_milder_suggestion": null,
+      "warning": null,
+      "reason": "Field is required to create and manage the user account, which is a core function of the telehealth app. No special-category data is collected here.",
+      "kb_refs": [
+        "gdpr-5-1-b",
+        "gdpr-25-2"
+      ],
+      "microcopy": "We need your first name to create your account and ensure we address you correctly throughout the app.",
+      "suggested_label": null,
+      "retention_days": 3650,
+      "data_handling": "retain",
+      "human_override": null
+    },
+    {
+      "field_id": "preferred_name",
+      "action": "keep",
+      "proposed_action": "keep",
+      "modifiers": [],
+      "alternative_action": null,
+      "source": "ai",
+      "check": {
+        "field_id": "preferred_name",
+        "triggered": [
+          {
+            "rule_id": "C01",
+            "severity": "info",
+            "floor_action": "keep",
+            "alternative_action": null,
+            "modifiers": [],
+            "kb_refs": [
+              "gdpr-25-2",
+              "fadp-7"
+            ],
+            "message": "Optional, low-risk field. Optional inclusive fields are not penalised."
+          }
+        ],
+        "floor_action": "keep",
+        "protected_inclusive": true
+      },
+      "ai": {
+        "field_id": "preferred_name",
+        "inferred_category": "personal",
+        "special_category": false,
+        "necessity": "necessary",
+        "proposed_action": "keep",
+        "modifiers": [],
+        "alternative_action": null,
+        "reason": "The field is optional, low-risk, and directly supports the stated purpose of displaying the name the user prefers. No special-category data is collected.",
+        "kb_refs": [
+          "gdpr-25-2",
+          "fadp-7"
+        ],
+        "microcopy": "We’ll use your preferred name when staff address you so you feel comfortable and respected.",
+        "suggested_label": null,
+        "retention_suggestion_days": null,
+        "data_handling": "retain",
+        "confidence": 0.95
+      },
+      "disagreement": false,
+      "ai_milder_suggestion": null,
+      "warning": null,
+      "reason": "The field is optional, low-risk, and directly supports the stated purpose of displaying the name the user prefers. No special-category data is collected.",
+      "kb_refs": [
+        "gdpr-25-2",
+        "fadp-7"
+      ],
+      "microcopy": "We’ll use your preferred name when staff address you so you feel comfortable and respected.",
+      "suggested_label": null,
+      "retention_days": 3650,
+      "data_handling": "retain",
+      "human_override": null
+    },
+    {
+      "field_id": "date_of_birth",
+      "action": "keep",
+      "proposed_action": "keep",
+      "modifiers": [],
+      "alternative_action": null,
+      "source": "ai",
+      "check": {
+        "field_id": "date_of_birth",
+        "triggered": [],
+        "floor_action": "keep",
+        "protected_inclusive": false
+      },
+      "ai": {
+        "field_id": "date_of_birth",
+        "inferred_category": "health",
+        "special_category": false,
+        "necessity": "necessary",
+        "proposed_action": "keep",
+        "modifiers": [],
+        "alternative_action": null,
+        "reason": "Age verification is a legitimate purpose for telehealth onboarding; date of birth is necessary to estimate age and match patients correctly.",
+        "kb_refs": [
+          "gdpr-5-1-b",
+          "gdpr-5-1-c",
+          "gdpr-13",
+          "fadp-6-3"
+        ],
+        "microcopy": "We ask for your date of birth to verify you meet the minimum age requirement for this service and to help match you with the right care pathway.",
+        "suggested_label": "Date of birth (for age verification)",
+        "retention_suggestion_days": 3650,
+        "data_handling": "retain",
+        "confidence": 0.95
+      },
+      "disagreement": false,
+      "ai_milder_suggestion": null,
+      "warning": null,
+      "reason": "Age verification is a legitimate purpose for telehealth onboarding; date of birth is necessary to estimate age and match patients correctly.",
+      "kb_refs": [
+        "gdpr-5-1-b",
+        "gdpr-5-1-c",
+        "gdpr-13",
+        "fadp-6-3"
+      ],
+      "microcopy": "We ask for your date of birth to verify you meet the minimum age requirement for this service and to help match you with the right care pathway.",
+      "suggested_label": "Date of birth (for age verification)",
+      "retention_days": 3650,
+      "data_handling": "retain",
+      "human_override": null
+    },
+    {
+      "field_id": "insurance_number",
+      "action": "better_explain",
+      "proposed_action": "better_explain",
+      "modifiers": [],
+      "alternative_action": null,
+      "source": "ai",
+      "check": {
+        "field_id": "insurance_number",
+        "triggered": [
+          {
+            "rule_id": "C03",
+            "severity": "info",
+            "floor_action": "keep",
+            "alternative_action": null,
+            "modifiers": [],
+            "kb_refs": [
+              "gdpr-9-2",
+              "gdpr-13",
+              "fadp-6-7",
+              "fadp-19"
+            ],
+            "message": "Special-category data with a stated purpose: make sure an explicit legal basis exists and the purpose is explained to the person."
+          },
+          {
+            "rule_id": "C08",
+            "severity": "info",
+            "floor_action": "keep",
+            "alternative_action": null,
+            "modifiers": [],
+            "kb_refs": [
+              "gdpr-5-1-e",
+              "fadp-6-4"
+            ],
+            "message": "Retention of 3650 days (10.0 years) for sensitive data. Verify it against a legal retention duty; otherwise shorten."
+          }
+        ],
+        "floor_action": "keep",
+        "protected_inclusive": false
+      },
+      "ai": {
+        "field_id": "insurance_number",
+        "inferred_category": "health",
+        "special_category": true,
+        "necessity": "necessary",
+        "proposed_action": "better_explain",
+        "modifiers": [],
+        "alternative_action": null,
+        "reason": "Billing with insurer is a plausible purpose for an insurance number, but the field is mandatory at entry stage without clear explanation or legal basis. People must know why it is required, who receives it, and how long it is kept.",
+        "kb_refs": [
+          "gdpr-5-1-b",
+          "gdpr-5-1-c",
+          "gdpr-6",
+          "gdpr-9",
+          "gdpr-13",
+          "fadp-5-c",
+          "fadp-6-3",
+          "fadp-19"
+        ],
+        "microcopy": "We need your insurance number to verify coverage and bill your insurer correctly. It will be stored for 3650 days and shared with your insurer and their processors.",
+        "suggested_label": "Insurance number (for billing)",
+        "retention_suggestion_days": 3650,
+        "data_handling": "retain",
+        "confidence": 0.9
+      },
+      "disagreement": false,
+      "ai_milder_suggestion": null,
+      "warning": null,
+      "reason": "Billing with insurer is a plausible purpose for an insurance number, but the field is mandatory at entry stage without clear explanation or legal basis. People must know why it is required, who receives it, and how long it is kept.",
+      "kb_refs": [
+        "gdpr-5-1-b",
+        "gdpr-5-1-c",
+        "gdpr-6",
+        "gdpr-9",
+        "gdpr-13",
+        "fadp-5-c",
+        "fadp-6-3",
+        "fadp-19",
+        "gdpr-9-2",
+        "fadp-6-7",
+        "gdpr-5-1-e",
+        "fadp-6-4"
+      ],
+      "microcopy": "We need your insurance number to verify coverage and bill your insurer correctly. It will be stored for 3650 days and shared with your insurer and their processors.",
+      "suggested_label": "Insurance number (for billing)",
+      "retention_days": 3650,
+      "data_handling": "retain",
+      "human_override": null
+    },
+    {
+      "field_id": "mental_health_history",
+      "action": "remove",
+      "proposed_action": "remove",
+      "modifiers": [
+        "delay"
+      ],
+      "alternative_action": "better_explain",
+      "source": "both",
+      "check": {
+        "field_id": "mental_health_history",
+        "triggered": [
+          {
+            "rule_id": "C02",
+            "severity": "block",
+            "floor_action": "remove",
+            "alternative_action": "better_explain",
+            "modifiers": [
+              "delay"
+            ],
+            "kb_refs": [
+              "gdpr-9",
+              "gdpr-5-1-c",
+              "fadp-5-c",
+              "fadp-6-3"
+            ],
+            "message": "Special-category data without a documented purpose must not be collected at this early stage."
+          },
+          {
+            "rule_id": "C04",
+            "severity": "warn",
+            "floor_action": "make_optional",
+            "alternative_action": null,
+            "modifiers": [],
+            "kb_refs": [
+              "gdpr-5-1-c",
+              "gdpr-25-2",
+              "fadp-6-2",
+              "fadp-7"
+            ],
+            "message": "Mandatory field without a documented purpose. Mandatory is not the default; it needs a reason."
+          },
+          {
+            "rule_id": "C06",
+            "severity": "warn",
+            "floor_action": "better_explain",
+            "alternative_action": null,
+            "modifiers": [],
+            "kb_refs": [
+              "gdpr-13-1-e",
+              "fadp-19"
+            ],
+            "message": "Shared with a third party without a documented purpose. Recipients must be named at collection."
+          },
+          {
+            "rule_id": "C08",
+            "severity": "info",
+            "floor_action": "keep",
+            "alternative_action": null,
+            "modifiers": [],
+            "kb_refs": [
+              "gdpr-5-1-e",
+              "fadp-6-4"
+            ],
+            "message": "Retention of 3650 days (10.0 years) for sensitive data. Verify it against a legal retention duty; otherwise shorten."
+          }
+        ],
+        "floor_action": "remove",
+        "protected_inclusive": false
+      },
+      "ai": {
+        "field_id": "mental_health_history",
+        "inferred_category": "health",
+        "special_category": true,
+        "necessity": "unclear",
+        "proposed_action": "remove",
+        "modifiers": [],
+        "alternative_action": null,
+        "reason": "No stated purpose for collecting mental health history at signup; special-category health data cannot be collected without a clear, necessary purpose and legal basis. Collect only if later in care pathway and with explicit consent.",
+        "kb_refs": [
+          "gdpr-9",
+          "gdpr-9-2",
+          "gdpr-13",
+          "fadp-5-c",
+          "fadp-6-3"
+        ],
+        "microcopy": null,
+        "suggested_label": null,
+        "retention_suggestion_days": null,
+        "data_handling": "delete",
+        "confidence": 0.98
+      },
+      "disagreement": false,
+      "ai_milder_suggestion": null,
+      "warning": null,
+      "reason": "No stated purpose for collecting mental health history at signup; special-category health data cannot be collected without a clear, necessary purpose and legal basis. Collect only if later in care pathway and with explicit consent.",
+      "kb_refs": [
+        "gdpr-9",
+        "gdpr-9-2",
+        "gdpr-13",
+        "fadp-5-c",
+        "fadp-6-3",
+        "gdpr-5-1-c",
+        "gdpr-25-2",
+        "fadp-6-2",
+        "fadp-7",
+        "gdpr-13-1-e",
+        "fadp-19",
+        "gdpr-5-1-e",
+        "fadp-6-4"
+      ],
+      "microcopy": null,
+      "suggested_label": null,
+      "retention_days": 3650,
+      "data_handling": "delete",
+      "human_override": null
+    },
+    {
+      "field_id": "language_preference",
+      "action": "keep",
+      "proposed_action": "keep",
+      "modifiers": [],
+      "alternative_action": null,
+      "source": "ai",
+      "check": {
+        "field_id": "language_preference",
+        "triggered": [
+          {
+            "rule_id": "C01",
+            "severity": "info",
+            "floor_action": "keep",
+            "alternative_action": null,
+            "modifiers": [],
+            "kb_refs": [
+              "gdpr-25-2",
+              "fadp-7"
+            ],
+            "message": "Optional, low-risk field. Optional inclusive fields are not penalised."
+          }
+        ],
+        "floor_action": "keep",
+        "protected_inclusive": true
+      },
+      "ai": {
+        "field_id": "language_preference",
+        "inferred_category": "preferences",
+        "special_category": false,
+        "necessity": "necessary",
+        "proposed_action": "keep",
+        "modifiers": [],
+        "alternative_action": null,
+        "reason": "The field is optional, low-risk, and directly supports the stated purpose of providing multilingual support at signup. No special-category data is collected.",
+        "kb_refs": [
+          "gdpr-25-2",
+          "fadp-7"
+        ],
+        "microcopy": "We ask for your preferred language so we can show you support and content in the language you understand best.",
+        "suggested_label": "Preferred language",
+        "retention_suggestion_days": null,
+        "data_handling": "retain",
+        "confidence": 0.95
+      },
+      "disagreement": false,
+      "ai_milder_suggestion": null,
+      "warning": null,
+      "reason": "The field is optional, low-risk, and directly supports the stated purpose of providing multilingual support at signup. No special-category data is collected.",
+      "kb_refs": [
+        "gdpr-25-2",
+        "fadp-7"
+      ],
+      "microcopy": "We ask for your preferred language so we can show you support and content in the language you understand best.",
+      "suggested_label": "Preferred language",
+      "retention_days": 3650,
+      "data_handling": "retain",
+      "human_override": null
+    },
+    {
+      "field_id": "emergency_contact_name",
+      "action": "make_optional",
+      "proposed_action": "make_optional",
+      "modifiers": [],
+      "alternative_action": null,
+      "source": "checks",
+      "check": {
+        "field_id": "emergency_contact_name",
+        "triggered": [
+          {
+            "rule_id": "C04",
+            "severity": "warn",
+            "floor_action": "make_optional",
+            "alternative_action": null,
+            "modifiers": [],
+            "kb_refs": [
+              "gdpr-5-1-c",
+              "gdpr-25-2",
+              "fadp-6-2",
+              "fadp-7"
+            ],
+            "message": "Mandatory field without a documented purpose. Mandatory is not the default; it needs a reason."
+          }
+        ],
+        "floor_action": "make_optional",
+        "protected_inclusive": false
+      },
+      "ai": {
+        "field_id": "emergency_contact_name",
+        "inferred_category": "contact",
+        "special_category": false,
+        "necessity": "unclear",
+        "proposed_action": "better_explain",
+        "modifiers": [],
+        "alternative_action": null,
+        "reason": "No stated purpose makes it impossible to assess necessity or compatibility with signup stage. Emergency contact name is not essential for account creation or telehealth service access.",
+        "kb_refs": [
+          "gdpr-5-1-b",
+          "gdpr-5-1-c",
+          "gdpr-13",
+          "fadp-6-3"
+        ],
+        "microcopy": "We ask for an emergency contact name so our care team can reach someone on your behalf if you cannot respond during a session. We will store it securely in your account and never share it with third parties.",
+        "suggested_label": "Emergency contact name (optional)",
+        "retention_suggestion_days": null,
+        "data_handling": "retain",
+        "confidence": 0.95
+      },
+      "disagreement": true,
+      "ai_milder_suggestion": {
+        "action": "better_explain",
+        "justification": "No stated purpose makes it impossible to assess necessity or compatibility with signup stage. Emergency contact name is not essential for account creation or telehealth service access."
+      },
+      "warning": null,
+      "reason": "Mandatory field without a documented purpose. Mandatory is not the default; it needs a reason.",
+      "kb_refs": [
+        "gdpr-5-1-b",
+        "gdpr-5-1-c",
+        "gdpr-13",
+        "fadp-6-3",
+        "gdpr-25-2",
+        "fadp-6-2",
+        "fadp-7"
+      ],
+      "microcopy": "We ask for an emergency contact name so our care team can reach someone on your behalf if you cannot respond during a session. We will store it securely in your account and never share it with third parties.",
+      "suggested_label": "Emergency contact name (optional)",
+      "retention_days": 3650,
+      "data_handling": "retain",
+      "human_override": null
+    },
+    {
+      "field_id": "passport_scan",
+      "action": "remove",
+      "proposed_action": "remove",
+      "modifiers": [],
+      "alternative_action": "better_explain",
+      "source": "both",
+      "check": {
+        "field_id": "passport_scan",
+        "triggered": [
+          {
+            "rule_id": "C04",
+            "severity": "warn",
+            "floor_action": "make_optional",
+            "alternative_action": null,
+            "modifiers": [],
+            "kb_refs": [
+              "gdpr-5-1-c",
+              "gdpr-25-2",
+              "fadp-6-2",
+              "fadp-7"
+            ],
+            "message": "Mandatory field without a documented purpose. Mandatory is not the default; it needs a reason."
+          },
+          {
+            "rule_id": "C06",
+            "severity": "warn",
+            "floor_action": "better_explain",
+            "alternative_action": null,
+            "modifiers": [],
+            "kb_refs": [
+              "gdpr-13-1-e",
+              "fadp-19"
+            ],
+            "message": "Shared with a third party without a documented purpose. Recipients must be named at collection."
+          },
+          {
+            "rule_id": "C07",
+            "severity": "block",
+            "floor_action": "remove",
+            "alternative_action": "better_explain",
+            "modifiers": [],
+            "kb_refs": [
+              "gdpr-5-1-c",
+              "gdpr-32",
+              "fadp-8"
+            ],
+            "message": "Identity document upload without a documented need. High-risk data; collect only where legally required and say why."
+          },
+          {
+            "rule_id": "C08",
+            "severity": "info",
+            "floor_action": "keep",
+            "alternative_action": null,
+            "modifiers": [],
+            "kb_refs": [
+              "gdpr-5-1-e",
+              "fadp-6-4"
+            ],
+            "message": "Retention of 3650 days (10.0 years) for sensitive data. Verify it against a legal retention duty; otherwise shorten."
+          }
+        ],
+        "floor_action": "remove",
+        "protected_inclusive": false
+      },
+      "ai": {
+        "field_id": "passport_scan",
+        "inferred_category": "identity_document",
+        "special_category": true,
+        "necessity": "unclear",
+        "proposed_action": "remove",
+        "modifiers": [],
+        "alternative_action": null,
+        "reason": "No stated purpose, no legal basis, and identity document is special-category data collected at entry stage without justification. Collect only when necessary for a specific role or later in the care journey.",
+        "kb_refs": [
+          "gdpr-9",
+          "gdpr-9-2",
+          "gdpr-13",
+          "fadp-5-c",
+          "gdpr-25-2"
+        ],
+        "microcopy": null,
+        "suggested_label": null,
+        "retention_suggestion_days": null,
+        "data_handling": "delete",
+        "confidence": 0.98
+      },
+      "disagreement": false,
+      "ai_milder_suggestion": null,
+      "warning": null,
+      "reason": "No stated purpose, no legal basis, and identity document is special-category data collected at entry stage without justification. Collect only when necessary for a specific role or later in the care journey.",
+      "kb_refs": [
+        "gdpr-9",
+        "gdpr-9-2",
+        "gdpr-13",
+        "fadp-5-c",
+        "gdpr-25-2",
+        "gdpr-5-1-c",
+        "fadp-6-2",
+        "fadp-7",
+        "gdpr-13-1-e",
+        "fadp-19",
+        "gdpr-32",
+        "fadp-8",
+        "gdpr-5-1-e",
+        "fadp-6-4"
+      ],
+      "microcopy": null,
+      "suggested_label": null,
+      "retention_days": 3650,
+      "data_handling": "delete",
+      "human_override": null
+    }
+  ],
+  "fields_done": 8,
+  "fields_total": 8,
+  "ai_model": "swiss-ai/Apertus-v1.5-70B",
+  "cached": true,
+  "computed_at": "2026-09-23T11:55:09.156708Z",
+  "ai_errors": {}
+}

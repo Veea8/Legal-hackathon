@@ -63,6 +63,12 @@ class _RateLimiter:
         self._next = 0.0
         self._lock = asyncio.Lock()
 
+    def slow_down(self, factor: float = 1.5, ceiling: float = 4.0) -> None:
+        """Widen the gap between calls after a 429, up to `ceiling` seconds."""
+        if self.interval <= 0:
+            self.interval = 0.25
+        self.interval = min(self.interval * factor, ceiling)
+
     async def wait(self) -> None:
         if self.interval <= 0:
             return
@@ -90,6 +96,8 @@ class ApertusClient:
         self.timeout_s = float(_env("AI_TIMEOUT_S", "25"))
         self.concurrency = int(_env("AI_CONCURRENCY", "4"))
         self.max_rps = float(_env("AI_MAX_RPS", "4"))
+        self.rate_retry_max = int(_env("AI_RATE_RETRIES", "4"))
+        self.rate_backoff_s = float(_env("AI_RATE_BACKOFF_S", "1.5"))
         self.user_agent = _env("USER_AGENT", "data-minimiser-hackathon/0.1")
         self.json_mode: Optional[bool] = None  # None = not probed yet
         self._client: Any = None
@@ -140,7 +148,10 @@ class ApertusClient:
     def _primitives(self) -> tuple[asyncio.Semaphore, _RateLimiter]:
         loop = asyncio.get_running_loop()
         if self._loop is not loop or self._sem is None or self._limiter is None:
+            # New event loop (e.g. one asyncio.run() per form in precompute_demo.py): the httpx
+            # pool inside AsyncOpenAI belongs to the old, now closed loop. Drop it with the rest.
             self._loop = loop
+            self._client = None
             self._sem = asyncio.Semaphore(max(1, self.concurrency))
             self._limiter = _RateLimiter(self.max_rps)
         return self._sem, self._limiter
@@ -164,6 +175,7 @@ class ApertusClient:
         sem, limiter = self._primitives()
         messages = [{"role": "system", "content": system}, {"role": "user", "content": user}]
         key_retried = parse_retried = False
+        rate_retries = 0
         async with sem:
             while True:
                 await limiter.wait()
@@ -186,7 +198,16 @@ class ApertusClient:
                             "Re-issue it via the Keymaker and update backend/.env."
                         ) from exc
                     if status == 429:
-                        raise AIError("HTTP 429: rate limit hit (Swisscom allows 5 req/s). Lower AI_MAX_RPS.") from exc
+                        if rate_retries < self.rate_retry_max:
+                            # The shared limiter paces our own calls; a 429 means the server wants
+                            # more room anyway. Wait, then let everyone else through more slowly too.
+                            rate_retries += 1
+                            limiter.slow_down()
+                            await asyncio.sleep(self.rate_backoff_s * (2 ** (rate_retries - 1)))
+                            continue
+                        raise AIError(
+                            f"HTTP 429: rate limited after {rate_retries} retries. Lower AI_MAX_RPS."
+                        ) from exc
                     raise AIError(f"HTTP {status}: {str(getattr(exc, 'message', exc))[:200]}") from exc
                 except (asyncio.TimeoutError, APITimeoutError) as exc:
                     raise AIError(f"timed out after {self.timeout_s:.0f}s") from exc

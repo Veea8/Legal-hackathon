@@ -58,8 +58,6 @@ export const api = {
   kb: () => request<KBEntry[]>("/kb"),
   demoForms: () => request<DemoFormInfo[]>("/demo-forms"),
   createDemo: (form_id: string) => request<FormSchema>("/forms", json("POST", { source: "demo", form_id })),
-  createPaste: (text: string, name?: string, business_context?: string) =>
-    request<FormSchema>("/forms", json("POST", { source: "paste", text, name, business_context })),
   upload: (file: File) => {
     const fd = new FormData();
     fd.append("file", file);

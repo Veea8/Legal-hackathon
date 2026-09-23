@@ -40,6 +40,9 @@ export interface FormSchema {
   legal_basis: LegalBasis | null;
   stage: Stage;
   source: Source;
+  recipients: string | null;
+  involves_minors: boolean | null;
+  retention_default_days: number | null;
   fields: FieldSpec[];
 }
 
@@ -184,6 +187,7 @@ export interface ReportRow {
   owner_decision: string;
   warning: string | null;
   retention_days: number | null;
+  delete_by: string | null;
   data_handling: DataHandling;
 }
 
@@ -228,6 +232,8 @@ export interface RuleOverride {
   action?: Action | null;
   accept_alternative?: boolean;
   accept_ai_suggestion?: boolean;
+  retention_days?: number | null;
+  clear_retention?: boolean;
   note?: string;
 }
 

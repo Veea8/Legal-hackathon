@@ -1,0 +1,314 @@
+{
+  "form_id": "F005",
+  "status": "proposed",
+  "rules": [
+    {
+      "field_id": "display_name",
+      "action": "keep",
+      "proposed_action": "keep",
+      "modifiers": [],
+      "alternative_action": null,
+      "source": "ai",
+      "check": {
+        "field_id": "display_name",
+        "triggered": [],
+        "floor_action": "keep",
+        "protected_inclusive": false
+      },
+      "ai": {
+        "field_id": "display_name",
+        "inferred_category": "personal",
+        "special_category": false,
+        "necessity": "necessary",
+        "proposed_action": "keep",
+        "modifiers": [],
+        "alternative_action": null,
+        "reason": "A display name is necessary for volunteer coordination and communication; it is not special-category data and the purpose is clear.",
+        "kb_refs": [
+          "gdpr-5-1-b",
+          "gdpr-5-1-c",
+          "gdpr-13"
+        ],
+        "microcopy": "We use your display name to address you in volunteer coordination tools and event communications.",
+        "suggested_label": null,
+        "retention_suggestion_days": null,
+        "data_handling": "retain",
+        "confidence": 0.95
+      },
+      "disagreement": false,
+      "ai_milder_suggestion": null,
+      "warning": null,
+      "reason": "A display name is necessary for volunteer coordination and communication; it is not special-category data and the purpose is clear.",
+      "kb_refs": [
+        "gdpr-5-1-b",
+        "gdpr-5-1-c",
+        "gdpr-13"
+      ],
+      "microcopy": "We use your display name to address you in volunteer coordination tools and event communications.",
+      "suggested_label": null,
+      "retention_days": 1095,
+      "data_handling": "retain",
+      "human_override": null
+    },
+    {
+      "field_id": "legal_sex",
+      "action": "remove",
+      "proposed_action": "remove",
+      "modifiers": [],
+      "alternative_action": null,
+      "source": "both",
+      "check": {
+        "field_id": "legal_sex",
+        "triggered": [
+          {
+            "rule_id": "C04",
+            "severity": "warn",
+            "floor_action": "make_optional",
+            "alternative_action": null,
+            "modifiers": [],
+            "kb_refs": [
+              "gdpr-5-1-c",
+              "gdpr-25-2",
+              "fadp-6-2",
+              "fadp-7"
+            ],
+            "message": "Mandatory field without a documented purpose. Mandatory is not the default; it needs a reason."
+          },
+          {
+            "rule_id": "C06",
+            "severity": "warn",
+            "floor_action": "better_explain",
+            "alternative_action": null,
+            "modifiers": [],
+            "kb_refs": [
+              "gdpr-13-1-e",
+              "fadp-19"
+            ],
+            "message": "Shared with a third party without a documented purpose. Recipients must be named at collection."
+          },
+          {
+            "rule_id": "C10",
+            "severity": "warn",
+            "floor_action": "make_optional",
+            "alternative_action": "remove",
+            "modifiers": [],
+            "kb_refs": [
+              "gdpr-5-1-c",
+              "fadp-6-2"
+            ],
+            "message": "Identity-related field made mandatory without a purpose. At most optional, with inclusive options and 'prefer not to say'."
+          }
+        ],
+        "floor_action": "make_optional",
+        "protected_inclusive": false
+      },
+      "ai": {
+        "field_id": "legal_sex",
+        "inferred_category": "special_category",
+        "special_category": true,
+        "necessity": "unnecessary",
+        "proposed_action": "remove",
+        "modifiers": [],
+        "alternative_action": null,
+        "reason": "No stated purpose for collecting legal sex at entry stage; special-category data cannot be collected without a clear, necessary purpose and explicit consent. Default retention of 1095 days and third-party sharing are disproportionate.",
+        "kb_refs": [
+          "gdpr-9",
+          "gdpr-9-2",
+          "gdpr-13",
+          "gdpr-25-2"
+        ],
+        "microcopy": null,
+        "suggested_label": null,
+        "retention_suggestion_days": null,
+        "data_handling": "delete",
+        "confidence": 0.98
+      },
+      "disagreement": false,
+      "ai_milder_suggestion": null,
+      "warning": null,
+      "reason": "No stated purpose for collecting legal sex at entry stage; special-category data cannot be collected without a clear, necessary purpose and explicit consent. Default retention of 1095 days and third-party sharing are disproportionate.",
+      "kb_refs": [
+        "gdpr-9",
+        "gdpr-9-2",
+        "gdpr-13",
+        "gdpr-25-2",
+        "gdpr-5-1-c",
+        "fadp-6-2",
+        "fadp-7",
+        "gdpr-13-1-e",
+        "fadp-19"
+      ],
+      "microcopy": null,
+      "suggested_label": null,
+      "retention_days": 1095,
+      "data_handling": "delete",
+      "human_override": null
+    },
+    {
+      "field_id": "shirt_size",
+      "action": "keep",
+      "proposed_action": "keep",
+      "modifiers": [],
+      "alternative_action": null,
+      "source": "ai",
+      "check": {
+        "field_id": "shirt_size",
+        "triggered": [
+          {
+            "rule_id": "C01",
+            "severity": "info",
+            "floor_action": "keep",
+            "alternative_action": null,
+            "modifiers": [],
+            "kb_refs": [
+              "gdpr-25-2",
+              "fadp-7"
+            ],
+            "message": "Optional, low-risk field. Optional inclusive fields are not penalised."
+          }
+        ],
+        "floor_action": "keep",
+        "protected_inclusive": true
+      },
+      "ai": {
+        "field_id": "shirt_size",
+        "inferred_category": "preferences",
+        "special_category": false,
+        "necessity": "useful",
+        "proposed_action": "keep",
+        "modifiers": [],
+        "alternative_action": null,
+        "reason": "Field is optional, low-risk, and directly supports stated purpose of preparing event materials. No special-category data or identity documents are collected.",
+        "kb_refs": [
+          "gdpr-25-2"
+        ],
+        "microcopy": "We ask for your t-shirt size so we can prepare the right size of event materials for you.",
+        "suggested_label": null,
+        "retention_suggestion_days": 365,
+        "data_handling": "retain",
+        "confidence": 0.95
+      },
+      "disagreement": false,
+      "ai_milder_suggestion": null,
+      "warning": null,
+      "reason": "Field is optional, low-risk, and directly supports stated purpose of preparing event materials. No special-category data or identity documents are collected.",
+      "kb_refs": [
+        "gdpr-25-2",
+        "fadp-7"
+      ],
+      "microcopy": "We ask for your t-shirt size so we can prepare the right size of event materials for you.",
+      "suggested_label": null,
+      "retention_days": 365,
+      "data_handling": "retain",
+      "human_override": null
+    },
+    {
+      "field_id": "criminal_record_upload",
+      "action": "remove",
+      "proposed_action": "remove",
+      "modifiers": [
+        "delay"
+      ],
+      "alternative_action": "better_explain",
+      "source": "both",
+      "check": {
+        "field_id": "criminal_record_upload",
+        "triggered": [
+          {
+            "rule_id": "C02",
+            "severity": "block",
+            "floor_action": "remove",
+            "alternative_action": "better_explain",
+            "modifiers": [
+              "delay"
+            ],
+            "kb_refs": [
+              "gdpr-10",
+              "gdpr-5-1-c",
+              "fadp-5-c",
+              "fadp-6-3"
+            ],
+            "message": "Criminal-offence data without a documented purpose must not be collected at this early stage."
+          },
+          {
+            "rule_id": "C04",
+            "severity": "warn",
+            "floor_action": "make_optional",
+            "alternative_action": null,
+            "modifiers": [],
+            "kb_refs": [
+              "gdpr-5-1-c",
+              "gdpr-25-2",
+              "fadp-6-2",
+              "fadp-7"
+            ],
+            "message": "Mandatory field without a documented purpose. Mandatory is not the default; it needs a reason."
+          },
+          {
+            "rule_id": "C06",
+            "severity": "warn",
+            "floor_action": "better_explain",
+            "alternative_action": null,
+            "modifiers": [],
+            "kb_refs": [
+              "gdpr-13-1-e",
+              "fadp-19"
+            ],
+            "message": "Shared with a third party without a documented purpose. Recipients must be named at collection."
+          }
+        ],
+        "floor_action": "remove",
+        "protected_inclusive": false
+      },
+      "ai": {
+        "field_id": "criminal_record_upload",
+        "inferred_category": "criminal",
+        "special_category": true,
+        "necessity": "unnecessary",
+        "proposed_action": "remove",
+        "modifiers": [],
+        "alternative_action": null,
+        "reason": "No stated purpose, no legal basis, retention 1095 days is excessive for an entry-stage volunteer signup, and sharing with third parties is disproportionate for criminal record data.",
+        "kb_refs": [
+          "gdpr-9",
+          "gdpr-10",
+          "gdpr-25-2",
+          "fadp-5-c",
+          "fadp-6-2"
+        ],
+        "microcopy": null,
+        "suggested_label": null,
+        "retention_suggestion_days": null,
+        "data_handling": "delete",
+        "confidence": 0.98
+      },
+      "disagreement": false,
+      "ai_milder_suggestion": null,
+      "warning": null,
+      "reason": "No stated purpose, no legal basis, retention 1095 days is excessive for an entry-stage volunteer signup, and sharing with third parties is disproportionate for criminal record data.",
+      "kb_refs": [
+        "gdpr-9",
+        "gdpr-10",
+        "gdpr-25-2",
+        "fadp-5-c",
+        "fadp-6-2",
+        "gdpr-5-1-c",
+        "fadp-6-3",
+        "fadp-7",
+        "gdpr-13-1-e",
+        "fadp-19"
+      ],
+      "microcopy": null,
+      "suggested_label": null,
+      "retention_days": 1095,
+      "data_handling": "delete",
+      "human_override": null
+    }
+  ],
+  "fields_done": 4,
+  "fields_total": 4,
+  "ai_model": "swiss-ai/Apertus-v1.5-70B",
+  "cached": true,
+  "computed_at": "2026-09-23T11:55:49.671904Z",
+  "ai_errors": {}
+}

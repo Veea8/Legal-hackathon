@@ -1,6 +1,6 @@
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 
-const STEPS = ["Input", "Context", "Review", "Result"];
+const STEPS = ["Form", "Context", "Decisions", "Export"];
 
 function currentStep(pathname: string): number {
   if (pathname === "/") return 0;
@@ -13,32 +13,40 @@ function currentStep(pathname: string): number {
 export default function Layout() {
   const { pathname } = useLocation();
   const step = currentStep(pathname);
+  const wide = pathname.endsWith("/review") || pathname.endsWith("/result") || pathname === "/about";
+
   return (
     <div className="app">
       <header className="topbar">
         <Link to="/" className="brand">
           <span className="brand-mark" aria-hidden="true">◧</span> Data Minimiser
         </Link>
-        <nav aria-label="Main">
-          <NavLink to="/" end>Start</NavLink>
-          <NavLink to="/about">About</NavLink>
+
+        {step >= 0 && (
+          <ol className="stepper" aria-label="Progress">
+            {STEPS.map((s, i) => (
+              <li key={s} className={i === step ? "active" : i < step ? "done" : ""}>
+                <span className="dot" aria-current={i === step ? "step" : undefined}>
+                  <b>{i < step ? "✓" : i + 1}</b> <span>{s}</span>
+                </span>
+                {i < STEPS.length - 1 && <i className="bar" aria-hidden="true" />}
+              </li>
+            ))}
+          </ol>
+        )}
+
+        <nav className="topnav" aria-label="Main">
+          <NavLink to="/" end>New form</NavLink>
+          <NavLink to="/about">How it works</NavLink>
         </nav>
       </header>
-      {step >= 0 && (
-        <ol className="steps" aria-label="Progress">
-          {STEPS.map((s, i) => (
-            <li key={s} className={i === step ? "active" : i < step ? "done" : ""} aria-current={i === step ? "step" : undefined}>
-              <span className="step-num">{i + 1}</span> {s}
-            </li>
-          ))}
-        </ol>
-      )}
-      <main className="content">
+
+      <main className={wide ? "content" : "content narrow"}>
         <Outlet />
       </main>
+
       <footer className="foot">
-        Compliance checks are deterministic. The AI only ever sees field names, labels and purposes, never data values.
-        A human decides. Not legal advice.
+        Deterministic compliance checks · the AI sees field names, labels and purposes — never data values · a human decides. Not legal advice.
       </footer>
     </div>
   );
