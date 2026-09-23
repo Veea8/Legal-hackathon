@@ -2,7 +2,22 @@ import time
 
 from fastapi.testclient import TestClient
 
+from app import main as api_main
 from app.main import app
+from app.store import Store
+
+
+class FakeRedis:
+    def __init__(self):
+        self.values = {}
+        self.expiries = {}
+
+    async def set(self, key, value, *, exat):
+        self.values[key] = value
+        self.expiries[key] = exat
+
+    async def get(self, key):
+        return self.values.get(key)
 
 
 def _wait_for_analysis(client, sid, timeout=5.0):
@@ -87,3 +102,56 @@ def test_upload_csv_and_update_form():
         checks = {c["field_id"]: c for c in client.get(f"/api/forms/{sid}/checks").json()}
         assert checks["religion"]["floor_action"] == "keep"  # purpose now stated, only required->C04 gone too
         assert client.get("/api/forms/nope").status_code == 404
+
+
+def test_redis_session_survives_new_backend_instance(monkeypatch):
+    redis = FakeRedis()
+    monkeypatch.setattr(api_main, "store", Store(redis_client=redis))
+    with TestClient(app) as client:
+        created = client.post("/api/forms", json={"source": "demo", "form_id": "F001"})
+        assert created.status_code == 200
+        sid = created.json()["form_id"]
+        key = f"minima:session:{sid}"
+        expiry = redis.expiries[key]
+        assert expiry - int(api_main.store._decode(redis.values[key]).created_at.timestamp()) == 86400
+
+        monkeypatch.setattr(api_main, "store", Store(redis_client=redis))
+        assert client.get(f"/api/forms/{sid}").json()["form_id"] == sid
+        analyzed = client.post(f"/api/forms/{sid}/analyze")
+        assert analyzed.status_code == 200 and analyzed.json()["status"] == "proposed"
+
+        monkeypatch.setattr(api_main, "store", Store(redis_client=redis))
+        assert client.get(f"/api/forms/{sid}/analysis").json()["cached"] is True
+        overridden = client.put(f"/api/forms/{sid}/rules", json={"overrides": [
+            {"field_id": "mental_health_history", "action": "keep", "note": "Clinical triage requires it"}
+        ]})
+        assert overridden.status_code == 200
+
+        monkeypatch.setattr(api_main, "store", Store(redis_client=redis))
+        applied = client.post(f"/api/forms/{sid}/apply")
+        assert applied.status_code == 200
+
+        monkeypatch.setattr(api_main, "store", Store(redis_client=redis))
+        report = client.get(f"/api/forms/{sid}/report")
+        assert report.status_code == 200
+        assert report.json()["form"]["name"] == "Telehealth App Signup"
+        assert redis.expiries[key] == expiry
+
+
+def test_live_analysis_persists_across_backend_instances(monkeypatch):
+    redis = FakeRedis()
+    monkeypatch.setattr(api_main, "store", Store(redis_client=redis))
+    with TestClient(app) as client:
+        created = client.post("/api/forms", json={"source": "demo", "form_id": "F002"})
+        sid = created.json()["form_id"]
+
+        monkeypatch.setattr(api_main, "store", Store(redis_client=redis))
+        analyzed = client.post(f"/api/forms/{sid}/analyze", params={"live": "true"})
+        assert analyzed.status_code == 200
+        assert analyzed.json()["status"] == "proposed"
+        assert analyzed.json()["cached"] is False
+
+        monkeypatch.setattr(api_main, "store", Store(redis_client=redis))
+        retrieved = client.get(f"/api/forms/{sid}/analysis")
+        assert retrieved.status_code == 200
+        assert retrieved.json()["fields_done"] == len(created.json()["fields"])

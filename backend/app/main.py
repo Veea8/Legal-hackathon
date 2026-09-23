@@ -6,7 +6,6 @@ kept on the session so cached results can be served.
 
 from __future__ import annotations
 
-import asyncio
 import json
 import os
 from pathlib import Path
@@ -48,16 +47,13 @@ DEMO_FORMS: dict[str, FormSchema] = {f.form_id: f for f in load_demo_forms()}
 app = FastAPI(title="Minima API", version="0.1")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
-_tasks: dict[str, asyncio.Task] = {}
-
-
 # ---------------------------------------------------------------------------
 # helpers
 # ---------------------------------------------------------------------------
 
 
-def _session(sid: str) -> Session:
-    s = store.get(sid)
+async def _session(sid: str) -> Session:
+    s = await store.get(sid)
     if s is None:
         raise HTTPException(404, f"Unknown form '{sid}'")
     return s
@@ -164,7 +160,7 @@ async def create_form(req: CreateFormRequest) -> FormSchema:
         demo = DEMO_FORMS.get(req.form_id or "")
         if demo is None:
             raise HTTPException(404, f"Unknown demo form '{req.form_id}'")
-        s = store.create(demo, demo_form_id=demo.form_id)
+        s = await store.create(demo, demo_form_id=demo.form_id)
     else:
         if not req.text or not req.text.strip():
             raise HTTPException(422, "Paste some text describing the form fields.")
@@ -173,7 +169,7 @@ async def create_form(req: CreateFormRequest) -> FormSchema:
         except ImportError:
             raise HTTPException(501, "AI text extraction is not available yet.")
         schema = await extract.extract_fields(req.text, name=req.name, business_context=req.business_context)
-        s = store.create(schema)
+        s = await store.create(schema)
     s.schema.form_id = s.id
     return s.schema
 
@@ -189,7 +185,7 @@ async def upload_form(file: UploadFile = File(...)) -> list[FormSchema]:
         raise HTTPException(422, "No fields found. Use the challenge column format (form_id, field_name, ...).")
     out: list[FormSchema] = []
     for f in forms:
-        s = store.create(f)
+        s = await store.create(f)
         s.schema.form_id = s.id
         out.append(s.schema)
     return out
@@ -197,28 +193,28 @@ async def upload_form(file: UploadFile = File(...)) -> list[FormSchema]:
 
 @app.get("/api/forms/{sid}", response_model=FormSchema)
 async def get_form(sid: str) -> FormSchema:
-    return _session(sid).schema
+    return (await _session(sid)).schema
 
 
 @app.put("/api/forms/{sid}", response_model=FormSchema)
 async def update_form(sid: str, schema: FormSchema) -> FormSchema:
-    s = _session(sid)
+    s = await _session(sid)
     schema.form_id = s.id
     s.schema = schema
     s.checks, s.ruleset, s.minimised, s.report = [], None, None, None
+    await store.save(s)
     return s.schema
 
 
 @app.get("/api/forms/{sid}/checks", response_model=list[CheckResult])
 async def get_checks(sid: str) -> list[CheckResult]:
-    s = _session(sid)
-    s.checks = run_checks(s.schema)
-    return s.checks
+    s = await _session(sid)
+    return run_checks(s.schema)
 
 
 @app.post("/api/forms/{sid}/analyze", response_model=RuleSet)
 async def analyze(sid: str, live: bool = Query(False)) -> RuleSet:
-    s = _session(sid)
+    s = await _session(sid)
     cache = _cache_path(s.demo_form_id)
     if not live and cache and _schema_unchanged(s):
         rs = RuleSet.model_validate_json(cache.read_text(encoding="utf-8"))
@@ -227,53 +223,49 @@ async def analyze(sid: str, live: bool = Query(False)) -> RuleSet:
         rs.status = "proposed"
         s.checks = run_checks(s.schema)
         s.ruleset = rs
+        await store.save(s)
         return rs
-    task = _tasks.get(sid)
-    if task and not task.done():
-        return s.ruleset or RuleSet(form_id=s.id, fields_total=len(s.schema.fields))
-    s.checks = run_checks(s.schema)
-    s.ruleset = RuleSet(form_id=s.id, status="running", fields_total=len(s.schema.fields))
-    _tasks[sid] = asyncio.create_task(_run_analysis(s))
+    await _run_analysis(s)
+    await store.save(s)
     return s.ruleset
 
 
 @app.get("/api/forms/{sid}/analysis", response_model=RuleSet)
 async def get_analysis(sid: str) -> RuleSet:
-    s = _session(sid)
+    s = await _session(sid)
     if s.ruleset is None:
         raise HTTPException(404, "Analysis not started. POST /analyze first.")
-    task = _tasks.get(sid)
-    if task and task.done() and task.exception() is not None and s.ruleset.status == "running":
-        raise HTTPException(500, f"Analysis failed: {task.exception()}")
     return s.ruleset
 
 
 @app.put("/api/forms/{sid}/rules", response_model=RuleSet)
 async def put_rules(sid: str, req: OverridesRequest) -> RuleSet:
-    s = _session(sid)
+    s = await _session(sid)
     if s.ruleset is None or s.ruleset.status == "running":
         raise HTTPException(409, "Analysis not finished yet.")
     try:
         s.ruleset = apply_overrides(s.ruleset, req.overrides)
     except OverrideError as exc:
         raise HTTPException(422, str(exc))
+    await store.save(s)
     return s.ruleset
 
 
 @app.post("/api/forms/{sid}/apply", response_model=ApplyResponse)
 async def apply_rules(sid: str) -> ApplyResponse:
-    s = _session(sid)
+    s = await _session(sid)
     if s.ruleset is None or s.ruleset.status == "running":
         raise HTTPException(409, "Analysis not finished yet.")
     s.minimised = apply_engine(s.schema, s.ruleset)
     s.report = build_report(s.schema, s.ruleset, s.minimised)
     s.ruleset.status = "applied"
+    await store.save(s)
     return ApplyResponse(minimised=s.minimised, report=s.report)
 
 
 @app.get("/api/forms/{sid}/report")
 async def get_report(sid: str, format: str = Query("json", pattern="^(json|csv|html)$")):
-    s = _session(sid)
+    s = await _session(sid)
     if s.report is None:
         raise HTTPException(409, "Apply the rules first.")
     if format == "csv":
