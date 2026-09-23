@@ -19,7 +19,7 @@ export default function Layout() {
     <div className="app">
       <header className="topbar">
         <Link to="/" className="brand">
-          <span className="brand-mark" aria-hidden="true">◧</span> Data Minimiser
+          <span className="brand-mark" aria-hidden="true">◧</span> Minima
         </Link>
 
         {step >= 0 && (

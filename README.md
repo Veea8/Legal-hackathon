@@ -1,4 +1,4 @@
-# Data Minimiser
+# Minima
 
 Privacy-by-design assistant for forms, onboarding flows and CRM schemas (Legal Hackathon 2026, Track 1).
 It reviews every field of a form and proposes **keep / make optional / remove / better explain**, with a

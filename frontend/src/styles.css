@@ -1,4 +1,4 @@
-/* Data Minimiser — design system.
+/* Minima — design system.
    Neutral surfaces, one accent, near-black primary. Everything else is spacing and type. */
 
 :root {
@@ -500,15 +500,17 @@ button.block { width: 100%; }
 .decide-opt .o-sub { font-size: .78rem; color: var(--muted); margin-top: .05rem; }
 .decide-opt .rec { font-size: .66rem; font-weight: 680; text-transform: uppercase; letter-spacing: .05em; color: var(--accent); background: var(--accent-soft); padding: .05rem .35rem; border-radius: 4px; }
 
-.timebox { border: 1px solid var(--line); border-radius: var(--r-sm); padding: .7rem .8rem; background: var(--surface-2); }
-.timebox .tb-head { display: flex; align-items: center; justify-content: space-between; gap: .5rem; }
-.timebox .tb-title { font-size: .87rem; font-weight: 560; }
-.timebox .tb-row { display: flex; gap: .4rem; align-items: center; margin-top: .6rem; }
+.timebox {
+  border: 1px solid var(--line); border-top: none; border-radius: 0 0 var(--r-sm) var(--r-sm);
+  padding: .7rem .8rem; background: var(--surface-2); margin: -.4rem .4rem 0;
+}
+.timebox .tb-row { display: flex; gap: .4rem; align-items: center; }
 .timebox input[type="number"] { width: 5.5rem; }
 .timebox .deadline { margin-top: .55rem; font-size: .82rem; color: var(--ok); background: var(--ok-bg); border: 1px solid var(--ok-line); border-radius: 6px; padding: .35rem .55rem; }
 .presets { display: flex; gap: .3rem; flex-wrap: wrap; margin-top: .5rem; }
 .presets button { font-size: .76rem; padding: .22rem .5rem; background: var(--surface); color: var(--ink-2); border-color: var(--line-strong); font-weight: 500; }
 .presets button:hover:not(:disabled) { background: #fff; border-color: var(--muted); }
+.presets button.on, .presets button.on:hover:not(:disabled) { background: var(--ink); border-color: var(--ink); color: #fff; }
 
 .switch { position: relative; width: 2.2rem; height: 1.25rem; border-radius: 999px; background: var(--line-strong); border: none; padding: 0; flex: none; transition: background .15s; cursor: pointer; }
 .switch::after { content: ""; position: absolute; top: .15rem; left: .15rem; width: .95rem; height: .95rem; border-radius: 50%; background: #fff; transition: transform .15s; box-shadow: var(--shadow-sm); }

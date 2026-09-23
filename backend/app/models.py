@@ -1,4 +1,4 @@
-"""All data contracts of the Data Minimiser.
+"""All data contracts of Minima.
 
 This file is the shared contract between backend modules and the frontend
 (`frontend/src/types.ts` mirrors it). Change it only with a message to the whole team.

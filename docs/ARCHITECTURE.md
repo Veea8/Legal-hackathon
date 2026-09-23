@@ -1,4 +1,4 @@
-# Data Minimiser — Architecture (team source of truth)
+# Minima — Architecture (team source of truth)
 
 Track 1 of the Legal Hackathon (23 Sep 2026). The tool reviews a form / flow / schema definition and
 classifies every field as **keep / make optional / remove / better explain**, with plain-language reasons
@@ -155,7 +155,9 @@ red remove, orange decide) carries the whole page: a distribution bar and legend
 per group, a rail per row. Each row also carries its own expiry control, because a deletion deadline is a decision
 and not a detail. Each group collapses; each row opens a right-hand drawer holding the whole decision: why →
 *what it costs you to ignore this* (consequence + benefit, with fine tiers) → the four decisions as explicit options
-with the recommended one marked → the time limit → legal references, each one a link to the article text
+with the recommended one marked → **how long do you keep it** (keep indefinitely vs delete automatically, as the same
+kind of explicit pair, so retention is answered on purpose instead of inherited from the spreadsheet; on a `remove`
+field it says why there is nothing to keep) → legal references, each one a link to the article text
 (`lib/lawLinks.ts`; `lib/consequences.ts` carries the consequence copy, keyed by check rule id). The drawer does not
 dim the page: above 1100px the content shifts to make room for it.
 

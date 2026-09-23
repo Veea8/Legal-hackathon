@@ -1,4 +1,4 @@
-"""Data Minimiser API. See docs/ARCHITECTURE.md section 8.
+"""Minima API. See docs/ARCHITECTURE.md section 8.
 
 Session ids double as `form_id` in every payload the frontend sees; the original demo id (F001…) is
 kept on the session so cached results can be served.
@@ -45,7 +45,7 @@ CACHE_DIR = Path(__file__).with_name("cache")
 FRONTEND_DIST = BACKEND_DIR.parent / "frontend" / "dist"
 DEMO_FORMS: dict[str, FormSchema] = {f.form_id: f for f in load_demo_forms()}
 
-app = FastAPI(title="Data Minimiser API", version="0.1")
+app = FastAPI(title="Minima API", version="0.1")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
 _tasks: dict[str, asyncio.Task] = {}

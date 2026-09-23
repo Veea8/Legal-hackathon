@@ -67,7 +67,16 @@ export default function DecisionDrawer(p: Props) {
   const deadline = deadlineFrom(typeof limit === "number" ? limit : null);
 
   async function choose(action: Action) {
-    if (action === current) return;
+    // Compare against what the user can SEE selected, not against the saved action. A pending
+    // (milder, note-required) choice moves the selection without saving it, so guarding on
+    // `current` alone made clicking back onto the saved option a no-op that never cleared the
+    // draft — the option then looked unselectable for good.
+    const shown = pending?.action ?? current;
+    if (action === shown) return;
+    if (action === current) {
+      setPending(null); // back to the saved choice: just drop the draft
+      return;
+    }
     if (isMilder(action, floor)) {
       setPending({ action, note: "" });
       return;
@@ -221,52 +230,93 @@ export default function DecisionDrawer(p: Props) {
                 {p.error && <div className="error inline">{p.error}</div>}
               </section>
 
-              {rule.action !== "remove" && (
-                <section className={`dsec${p.focusTime ? " flash" : ""}`} ref={timeRef}>
-                  <h4>Time limit</h4>
-                  <div className="timebox">
-                    <div className="tb-head">
-                      <span className="tb-title">Delete this field's data automatically</span>
-                      <button
-                        type="button"
-                        className="switch"
-                        role="switch"
-                        aria-checked={limit !== ""}
-                        aria-label="Set a deletion deadline"
-                        disabled={disabled}
-                        onClick={() => void saveLimit(limit === "" ? (rule.ai?.retention_suggestion_days ?? field.retention_days ?? 365) : null)}
-                      />
-                    </div>
-                    {limit !== "" ? (
-                      <>
-                        <div className="tb-row">
-                          <input
-                            type="number"
-                            min={1}
-                            max={36500}
-                            value={limit}
-                            disabled={disabled}
-                            onChange={(e) => setLimit(e.target.value === "" ? "" : Number(e.target.value))}
-                            onBlur={() => typeof limit === "number" && limit > 0 && void saveLimit(limit)}
-                          />
-                          <span className="small muted">days after collection</span>
-                        </div>
-                        <div className="presets">
-                          {RETENTION_PRESETS.map((r) => (
-                            <button key={r.days} type="button" disabled={disabled} onClick={() => void saveLimit(r.days)}>{r.label}</button>
-                          ))}
-                        </div>
-                        {deadline && <div className="deadline">Collected today ⇒ has to be deleted by {deadline}</div>}
-                      </>
-                    ) : (
-                      <p className="small muted" style={{ marginTop: ".4rem" }}>
-                        No deadline set — the data stays until someone deletes it by hand.
-                        {rule.ai?.retention_suggestion_days != null && ` The assessment suggests ${days(rule.ai.retention_suggestion_days)}.`}
-                      </p>
-                    )}
+              {/* Part of the decision, not an afterthought: two explicit options, the same shape as
+                  the four above, so "how long do we keep it" is answered on purpose rather than
+                  left at whatever the spreadsheet happened to say. */}
+              <section className={`dsec${p.focusTime ? " flash" : ""}`} ref={timeRef}>
+                <h4>How long do you keep it?</h4>
+                {rule.action === "remove" ? (
+                  <p className="small muted">
+                    Nothing is collected here, so there is nothing to keep. Choose a milder decision above if you
+                    want to set a deletion deadline instead.
+                  </p>
+                ) : (
+                  <div className="decide-list">
+                    <button
+                      type="button"
+                      className="decide-opt"
+                      aria-pressed={limit === ""}
+                      disabled={disabled}
+                      onClick={() => limit !== "" && void saveLimit(null)}
+                    >
+                      <span className="radio" aria-hidden="true" />
+                      <span>
+                        <span className="o-title">
+                          <span aria-hidden="true">∞</span>
+                          Keep until someone deletes it
+                        </span>
+                        <span className="o-sub">
+                          No deadline. The data stays in your systems until a person removes it by hand.
+                          {rule.ai?.retention_suggestion_days != null
+                            && ` The assessment suggests ${days(rule.ai.retention_suggestion_days)}.`}
+                        </span>
+                      </span>
+                    </button>
+
+                    <button
+                      type="button"
+                      className="decide-opt"
+                      aria-pressed={limit !== ""}
+                      disabled={disabled}
+                      onClick={() => limit === ""
+                        && void saveLimit(rule.ai?.retention_suggestion_days ?? field.retention_days ?? 365)}
+                    >
+                      <span className="radio" aria-hidden="true" />
+                      <span>
+                        <span className="o-title">
+                          <span aria-hidden="true">⏱</span>
+                          Delete it automatically
+                          {rule.retention_days == null && <span className="rec">recommended</span>}
+                        </span>
+                        <span className="o-sub">
+                          Set a deadline now. It appears in the report and the CSV as a deletion date.
+                        </span>
+                      </span>
+                    </button>
                   </div>
-                </section>
-              )}
+                )}
+
+                {rule.action !== "remove" && limit !== "" && (
+                  <div className="timebox">
+                    <div className="tb-row">
+                      <input
+                        type="number"
+                        min={1}
+                        max={36500}
+                        value={limit}
+                        disabled={disabled}
+                        onChange={(e) => setLimit(e.target.value === "" ? "" : Number(e.target.value))}
+                        onBlur={() => typeof limit === "number" && limit > 0 && void saveLimit(limit)}
+                      />
+                      <span className="small muted">days after collection</span>
+                    </div>
+                    <div className="presets">
+                      {RETENTION_PRESETS.map((r) => (
+                        <button
+                          key={r.days}
+                          type="button"
+                          className={limit === r.days ? "on" : undefined}
+                          disabled={disabled}
+                          onClick={() => void saveLimit(r.days)}
+                        >
+                          {r.label}
+                        </button>
+                      ))}
+                    </div>
+                    {deadline && <div className="deadline">Collected today ⇒ has to be deleted by {deadline}</div>}
+                  </div>
+                )}
+              </section>
 
               <section className="dsec">
                 <h4>Legal references</h4>
