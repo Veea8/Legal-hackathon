@@ -34,6 +34,8 @@ from app.models import (
     OverridesRequest,
     RuleSet,
 )
+from app.integrations.ics import render_ics
+from app.integrations.routes import router as integrations_router
 from app.report.build import build_report, render_csv, render_html
 from app.store import Session, store
 
@@ -161,6 +163,11 @@ async def create_form(req: CreateFormRequest) -> FormSchema:
         if demo is None:
             raise HTTPException(404, f"Unknown demo form '{req.form_id}'")
         s = await store.create(demo, demo_form_id=demo.form_id)
+    elif req.source == "schema":
+        if req.schema_ is None or not req.schema_.fields:
+            raise HTTPException(422, "Send a form schema with at least one field.")
+        demo_id = req.demo_form_id if req.demo_form_id in DEMO_FORMS else None
+        s = await store.create(req.schema_, demo_form_id=demo_id)
     else:
         if not req.text or not req.text.strip():
             raise HTTPException(422, "Paste some text describing the form fields.")
@@ -168,7 +175,12 @@ async def create_form(req: CreateFormRequest) -> FormSchema:
             from app.ai import extract  # noqa: WPS433
         except ImportError:
             raise HTTPException(501, "AI text extraction is not available yet.")
-        schema = await extract.extract_fields(req.text, name=req.name, business_context=req.business_context)
+        from app.ai.client import AIError  # noqa: WPS433
+
+        try:
+            schema = await extract.extract_fields(req.text, name=req.name, business_context=req.business_context)
+        except AIError as exc:
+            raise HTTPException(503, str(exc))
         s = await store.create(schema)
     s.schema.form_id = s.id
     return s.schema
@@ -264,7 +276,7 @@ async def apply_rules(sid: str) -> ApplyResponse:
 
 
 @app.get("/api/forms/{sid}/report")
-async def get_report(sid: str, format: str = Query("json", pattern="^(json|csv|html)$")):
+async def get_report(sid: str, format: str = Query("json", pattern="^(json|csv|html|ics)$")):
     s = await _session(sid)
     if s.report is None:
         raise HTTPException(409, "Apply the rules first.")
@@ -275,7 +287,15 @@ async def get_report(sid: str, format: str = Query("json", pattern="^(json|csv|h
         )
     if format == "html":
         return HTMLResponse(render_html(s.report))
+    if format == "ics":
+        return PlainTextResponse(
+            render_ics(s.report, sid=sid), media_type="text/calendar",
+            headers={"Content-Disposition": f'attachment; filename="deletion-deadlines-{sid}.ics"'},
+        )
     return JSONResponse(json.loads(s.report.model_dump_json()))
+
+
+app.include_router(integrations_router)
 
 
 # ---------------------------------------------------------------------------

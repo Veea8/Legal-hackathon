@@ -1,12 +1,16 @@
 import type {
   ApplyResponse,
   CheckResult,
+  DeliveryPreview,
+  DeliveryRecord,
+  DeliveryRequest,
   DemoFormInfo,
   FormSchema,
   HealthResponse,
   KBEntry,
   RuleOverride,
   RuleSet,
+  SendResponse,
 } from "./types";
 
 export class ApiError extends Error {
@@ -58,6 +62,10 @@ export const api = {
   kb: () => request<KBEntry[]>("/kb"),
   demoForms: () => request<DemoFormInfo[]>("/demo-forms"),
   createDemo: (form_id: string) => request<FormSchema>("/forms", json("POST", { source: "demo", form_id })),
+  createFromSchema: (schema: FormSchema, demo_form_id?: string) =>
+    request<FormSchema>("/forms", json("POST", { source: "schema", schema, demo_form_id })),
+  createPaste: (text: string, name?: string, business_context?: string) =>
+    request<FormSchema>("/forms", json("POST", { source: "paste", text, name, business_context })),
   upload: (file: File) => {
     const fd = new FormData();
     fd.append("file", file);
@@ -70,5 +78,12 @@ export const api = {
   analysis: (id: string) => request<RuleSet>(`/forms/${id}/analysis`),
   putRules: (id: string, overrides: RuleOverride[]) => request<RuleSet>(`/forms/${id}/rules`, json("PUT", { overrides })),
   apply: (id: string) => request<ApplyResponse>(`/forms/${id}/apply`, { method: "POST" }),
-  reportUrl: (id: string, format: "json" | "csv" | "html") => `/api/forms/${id}/report?format=${format}`,
+  reportUrl: (id: string, format: "json" | "csv" | "html" | "ics") => `/api/forms/${id}/report?format=${format}`,
+
+  // integrations
+  deliveries: (id: string) => request<DeliveryRecord[]>(`/forms/${id}/deliveries`),
+  previewDelivery: (id: string, req: DeliveryRequest) =>
+    request<DeliveryPreview>(`/forms/${id}/deliveries/preview`, json("POST", req)),
+  sendDelivery: (id: string, req: DeliveryRequest) =>
+    request<SendResponse>(`/forms/${id}/deliveries`, json("POST", req)),
 };

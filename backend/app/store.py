@@ -9,7 +9,7 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Optional
 
-from app.models import CheckResult, FormSchema, MinimisedForm, Report, RuleSet
+from app.models import CheckResult, DeliveryRecord, FormSchema, MinimisedForm, Report, RuleSet
 
 
 @dataclass
@@ -21,6 +21,9 @@ class Session:
     ruleset: Optional[RuleSet] = None
     minimised: Optional[MinimisedForm] = None
     report: Optional[Report] = None
+    # Outbound deliveries that actually left the machine. An audit trail, so it survives a
+    # schema edit that clears the analysis below it.
+    deliveries: list[DeliveryRecord] = field(default_factory=list)
     created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
 
@@ -60,6 +63,7 @@ class Store:
             ruleset=RuleSet.model_validate(data["ruleset"]) if data.get("ruleset") else None,
             minimised=MinimisedForm.model_validate(data["minimised"]) if data.get("minimised") else None,
             report=Report.model_validate(data["report"]) if data.get("report") else None,
+            deliveries=[DeliveryRecord.model_validate(x) for x in data.get("deliveries", [])],
             created_at=datetime.fromisoformat(data["created_at"]),
         )
 
@@ -84,6 +88,7 @@ class Store:
             "ruleset": session.ruleset.model_dump(mode="json") if session.ruleset else None,
             "minimised": session.minimised.model_dump(mode="json") if session.minimised else None,
             "report": session.report.model_dump(mode="json") if session.report else None,
+            "deliveries": [d.model_dump(mode="json") for d in session.deliveries],
             "created_at": session.created_at.isoformat(),
         }
         await redis.set(self._key(session.id), json.dumps(data), exat=int(session.created_at.timestamp()) + 86400)

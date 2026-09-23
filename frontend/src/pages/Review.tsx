@@ -1,13 +1,16 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { ApiError, api, errorMessage } from "../api";
 import ActionBadge from "../components/ActionBadge";
 import DecisionDrawer from "../components/DecisionDrawer";
 import { deadlineFrom } from "../lib/actions";
 import { stakeLine } from "../lib/consequences";
+import { isLostSession, restore } from "../lib/session";
 import type { Action, CheckResult, FieldRule, FieldSpec, FormSchema, KBEntry, RuleOverride, RuleSet } from "../types";
 
 type BucketKey = "keep" | "review" | "remove";
+
+const LOST = "This session expired on the server and could not be rebuilt from this browser. Start again from the form.";
 
 const BUCKETS: { key: BucketKey; title: string; sub: string }[] = [
   { key: "keep", title: "Keep", sub: "No change needed" },
@@ -39,6 +42,9 @@ function actionSummary(rule: FieldRule | undefined, unresolved: boolean): string
 export default function Review() {
   const { id = "" } = useParams();
   const nav = useNavigate();
+  const location = useLocation();
+  // Context hands the choice over instead of running the analysis itself and making you wait there.
+  const live = Boolean((location.state as { live?: boolean } | null)?.live);
   const [schema, setSchema] = useState<FormSchema | null>(null);
   const [checks, setChecks] = useState<CheckResult[]>([]);
   const [kb, setKb] = useState<KBEntry[]>([]);
@@ -59,32 +65,61 @@ export default function Review() {
         setChecks(results);
         setKb(entries);
       })
-      .catch((e) => !cancelled && setError(errorMessage(e)));
+      .catch(async (e) => {
+        if (cancelled) return;
+        if (isLostSession(e)) {
+          const fresh = await restore(id).catch(() => null);
+          if (fresh) { nav(`/forms/${fresh}/review`, { replace: true, state: { live } }); return; }
+          setError(LOST);
+          return;
+        }
+        setError(errorMessage(e));
+      });
     return () => { cancelled = true; };
-  }, [id]);
+  }, [id, nav, live]);
 
   useEffect(() => {
     let cancelled = false;
     let timer: number | undefined;
+    // The analysis runs as a background task in the server process. If that process is frozen or
+    // recycled mid-run — which is what a scale-to-zero host does between requests — the task dies
+    // and the status would sit on "running" forever. Nudge it once when nothing has moved.
+    let stalled = 0;
+    let lastDone = -1;
     async function tick() {
       try {
         let next: RuleSet;
         try {
           next = await api.analysis(id);
         } catch (e) {
-          if (e instanceof ApiError && e.status === 404) next = await api.analyze(id, false);
+          // A 404 that names the form is a lost session, not a missing analysis — let it fall
+          // through to the recovery below rather than trying to analyse a form that is gone.
+          if (e instanceof ApiError && e.status === 404 && !/Unknown form/i.test(e.message)) next = await api.analyze(id, live);
           else throw e;
         }
         if (cancelled) return;
         setRuleset(next);
-        if (next.status === "running") timer = window.setTimeout(() => void tick(), 900);
+        if (next.status === "running") {
+          stalled = next.fields_done === lastDone ? stalled + 1 : 0;
+          lastDone = next.fields_done;
+          if (stalled >= 20) { stalled = 0; await api.analyze(id, live); }
+          if (cancelled) return;
+          timer = window.setTimeout(() => void tick(), 900);
+        }
       } catch (e) {
-        if (!cancelled) setError(errorMessage(e));
+        if (cancelled) return;
+        if (isLostSession(e)) {
+          const fresh = await restore(id).catch(() => null);
+          if (fresh) { nav(`/forms/${fresh}/review`, { replace: true, state: { live } }); return; }
+          setError(LOST);
+          return;
+        }
+        setError(errorMessage(e));
       }
     }
     void tick();
     return () => { cancelled = true; if (timer) window.clearTimeout(timer); };
-  }, [id]);
+  }, [id, nav, live]);
 
   const onOverride = useCallback(async (override: RuleOverride) => {
     setRowErrors((current) => ({ ...current, [override.field_id]: "" }));

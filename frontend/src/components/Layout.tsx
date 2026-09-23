@@ -1,4 +1,5 @@
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
+import { FEDLEX } from "../lib/lawLinks";
 
 const STEPS = ["Form", "Context", "Decisions", "Export"];
 
@@ -19,7 +20,14 @@ export default function Layout() {
     <div className="app">
       <header className="topbar">
         <Link to="/" className="brand">
-          <span className="brand-mark" aria-hidden="true">◧</span> Minima
+          <span className="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <rect x="5" y="6.4" width="14" height="2.7" rx="1.35" />
+              <rect x="5" y="10.65" width="9.5" height="2.7" rx="1.35" />
+              <rect x="5" y="14.9" width="5" height="2.7" rx="1.35" />
+            </svg>
+          </span>
+          minima
         </Link>
 
         {step >= 0 && (
@@ -46,7 +54,41 @@ export default function Layout() {
       </main>
 
       <footer className="foot">
-        Deterministic compliance checks · the AI sees field names, labels and purposes — never data values · a human decides. Not legal advice.
+        <div className="foot-grid">
+          <section>
+            <h5>
+              <span className="flags" aria-hidden="true">🇨🇭 🇪🇺</span> Grounded in the law
+            </h5>
+            <p>
+              Every recommendation cites the article it comes from —{" "}
+              <a href={FEDLEX} target="_blank" rel="noreferrer">revFADP</a> Art. 6(2) proportionality,
+              6(3) recognisable purpose, 6(4) deletion, 7 privacy by design, 19 duty to inform ·{" "}
+              <a href="https://gdpr-info.eu/art-5-gdpr/" target="_blank" rel="noreferrer">GDPR</a> Art. 5(1)(c)
+              minimisation, 5(1)(e) storage limitation, 13 transparency, 25 by design and by default.
+            </p>
+          </section>
+
+          <section>
+            <h5>
+              <span className="flags" aria-hidden="true">🇨🇭</span> Sovereign, ethical AI
+            </h5>
+            <p>
+              Assessments run on <a href="https://www.swiss-ai.org/apertus" target="_blank" rel="noreferrer">Apertus 70B</a>,
+              the open-weight Swiss model, hosted in Switzerland. No US cloud, no training on your forms — and the
+              model only ever sees field names, labels and purposes, never a data value.
+            </p>
+          </section>
+
+          <section>
+            <h5>Deterministic first, human last</h5>
+            <p>
+              Rule checks decide; the model may only add context. Each decision, its legal basis and its deletion date
+              leave an exportable audit trail, so the data protection representative can show why every field survived.
+            </p>
+          </section>
+        </div>
+
+        <p className="foot-fine">minima · built at the Legal Hackathon 2026 · not legal advice</p>
       </footer>
     </div>
   );

@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { api, errorMessage } from "../api";
+import SendPanel from "../components/SendPanel";
 import { ACTION_SHORT } from "../lib/actions";
+import { isLostSession, restore } from "../lib/session";
 import type { Action, ApplyResponse } from "../types";
 
 const ORDER: Action[] = ["remove", "make_optional", "better_explain", "keep"];
 
 export default function Result() {
   const { id = "" } = useParams();
+  const nav = useNavigate();
   const [data, setData] = useState<ApplyResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -15,9 +18,17 @@ export default function Result() {
     let cancelled = false;
     api.apply(id)
       .then((d) => !cancelled && setData(d))
-      .catch((e) => !cancelled && setError(errorMessage(e)));
+      .catch(async (e) => {
+        if (cancelled) return;
+        if (isLostSession(e)) {
+          // Rebuilt sessions have no analysis yet, so hand them back to the decisions step.
+          const fresh = await restore(id).catch(() => null);
+          if (fresh) { nav(`/forms/${fresh}/review`, { replace: true }); return; }
+        }
+        setError(errorMessage(e));
+      });
     return () => { cancelled = true; };
-  }, [id]);
+  }, [id, nav]);
 
   if (error) {
     return <div className="error" role="alert">{error} <Link to={`/forms/${id}/review`}>Back to the decisions</Link></div>;
@@ -74,6 +85,8 @@ export default function Result() {
           </a>
         </div>
       </section>
+
+      <SendPanel id={id} report={report} />
 
       <div className="stats">
         {ORDER.map((a) => (

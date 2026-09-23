@@ -321,11 +321,17 @@ class DemoFormInfo(BaseModel):
 
 
 class CreateFormRequest(BaseModel):
-    source: Literal["demo", "paste"]
+    source: Literal["demo", "paste", "schema"]
     form_id: Optional[str] = None  # for source = demo
     text: Optional[str] = None  # for source = paste
+    # source = schema: a complete FormSchema, no AI involved. Used by callers that already hold
+    # structured fields, and to rebuild a session the server has forgotten (restart, redeploy).
+    schema_: Optional["FormSchema"] = Field(None, alias="schema")
+    demo_form_id: Optional[str] = None  # keeps the precomputed cache reachable after a rebuild
     name: Optional[str] = None
     business_context: Optional[str] = None
+
+    model_config = {"populate_by_name": True}
 
 
 class RuleOverride(BaseModel):
@@ -354,3 +360,54 @@ class HealthResponse(BaseModel):
     api_key_set: bool
     cached_forms: list[str]
     json_mode: Optional[bool] = None
+
+
+# ---------------------------------------------------------------------------
+# Integrations — the report, sent where the work happens
+# ---------------------------------------------------------------------------
+
+
+Destination = Literal["teams", "slack", "webhook", "email", "jira", "calendar"]
+
+
+class DeliveryRequest(BaseModel):
+    destination: Destination
+    url: str = ""  # teams | slack | webhook
+    to: str = ""  # email
+    project_key: str = "DPO"  # jira
+
+
+class DeliveryPreview(BaseModel):
+    """Exactly what would go out. The send path builds the same body from the same function."""
+
+    destination: Destination
+    title: str
+    subtitle: str
+    body_format: Literal["json", "text", "ics"]
+    body: str
+    summary: str  # "9 actions · 6 deletion deadlines · 1 flagged decision"
+    n_tasks: int
+    sendable: bool  # False for email / jira / calendar — those hand you the payload instead
+    needs_url: bool
+    url_label: Optional[str] = None
+    url_placeholder: Optional[str] = None
+    note: Optional[str] = None  # what happens when you press the button
+    link: Optional[str] = None  # mailto: or a download href
+
+
+class DeliveryRecord(BaseModel):
+    """One outbound HTTP delivery that actually left the machine. The target is stored redacted."""
+
+    id: str
+    destination: Destination
+    target: str
+    at: datetime
+    ok: bool
+    status: Optional[int] = None
+    detail: str = ""
+    summary: str
+
+
+class SendResponse(BaseModel):
+    record: DeliveryRecord
+    log: list[DeliveryRecord]

@@ -250,3 +250,48 @@ export interface HealthResponse {
   cached_forms: string[];
   json_mode: boolean | null;
 }
+
+// ---------------------------------------------------------------------------
+// Integrations — the report, sent where the work happens
+// ---------------------------------------------------------------------------
+
+export type Destination = "teams" | "slack" | "webhook" | "email" | "jira" | "calendar";
+
+export interface DeliveryRequest {
+  destination: Destination;
+  url?: string;
+  to?: string;
+  project_key?: string;
+}
+
+export interface DeliveryPreview {
+  destination: Destination;
+  title: string;
+  subtitle: string;
+  body_format: "json" | "text" | "ics";
+  body: string;
+  summary: string;
+  n_tasks: number;
+  sendable: boolean;
+  needs_url: boolean;
+  url_label: string | null;
+  url_placeholder: string | null;
+  note: string | null;
+  link: string | null;
+}
+
+export interface DeliveryRecord {
+  id: string;
+  destination: Destination;
+  target: string;
+  at: string;
+  ok: boolean;
+  status: number | null;
+  detail: string;
+  summary: string;
+}
+
+export interface SendResponse {
+  record: DeliveryRecord;
+  log: DeliveryRecord[];
+}

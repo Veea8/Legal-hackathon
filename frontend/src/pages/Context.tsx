@@ -1,11 +1,14 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { api, errorMessage } from "../api";
+import { isLostSession, remember, restore } from "../lib/session";
 import type { FormSchema, Jurisdiction, LegalBasis, Stage } from "../types";
 
 /* The context step is a conversation, not a form dump: one question at a time, each answered
    question collapses into a line you can click open again. No AI here — just the setting the
    checks and the assessment need. */
+
+const LOST = "This session expired on the server and could not be rebuilt from this browser. Start again from the form.";
 
 const AUDIENCES = ["Customers", "Leads / prospects", "Patients", "Employees", "Job applicants", "Members", "Students", "Suppliers"];
 
@@ -225,8 +228,21 @@ export default function Context() {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    api.getForm(id).then(setSchema).catch((e) => setError(errorMessage(e)));
-  }, [id]);
+    let cancelled = false;
+    api.getForm(id)
+      .then((f) => !cancelled && setSchema(f))
+      .catch(async (e) => {
+        if (cancelled) return;
+        if (isLostSession(e)) {
+          const fresh = await restore(id).catch(() => null);
+          if (fresh) { nav(`/forms/${fresh}/context`, { replace: true }); return; }
+          setError(LOST);
+          return;
+        }
+        setError(errorMessage(e));
+      });
+    return () => { cancelled = true; };
+  }, [id, nav]);
 
   const set = (p: Partial<FormSchema>) => setSchema((s) => (s ? { ...s, ...p } : s));
 
@@ -235,11 +251,19 @@ export default function Context() {
     setBusy(true);
     setError(null);
     try {
-      await api.updateForm(id, schema);
-      await api.analyze(id, live);
-      nav(`/forms/${id}/review`);
+      const saved = await api.updateForm(id, schema);
+      remember(id, saved);
+      // Straight to the decisions: that page is built to poll and fill in as fields land, so
+      // waiting here for the analysis only hid the progress behind a dead button.
+      nav(`/forms/${id}/review`, { state: { live } });
     } catch (e) {
-      setError(errorMessage(e));
+      if (isLostSession(e)) {
+        const fresh = await restore(id).catch(() => null);
+        if (fresh) { nav(`/forms/${fresh}/context`, { replace: true }); setBusy(false); return; }
+        setError(LOST);
+      } else {
+        setError(errorMessage(e));
+      }
       setBusy(false);
     }
   }

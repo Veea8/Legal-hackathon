@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState, type DragEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { api, errorMessage } from "../api";
+import ConnectorRow from "../components/ConnectorRow";
+import { remember } from "../lib/session";
 import type { DemoFormInfo, HealthResponse } from "../types";
 
 export default function Start() {
@@ -9,7 +11,7 @@ export default function Start() {
   const [health, setHealth] = useState<HealthResponse | null>(null);
   const [sample, setSample] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [busy, setBusy] = useState<"sample" | "upload" | null>(null);
+  const [busy, setBusy] = useState<"sample" | "upload" | "paste" | null>(null);
   const [over, setOver] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -18,12 +20,25 @@ export default function Start() {
     api.health().then(setHealth).catch(() => setHealth(null));
   }, []);
 
-  async function openSample() {
-    if (!sample) return;
+  async function openForm(formId: string) {
     setBusy("sample");
     setError(null);
     try {
-      const f = await api.createDemo(sample);
+      const f = await api.createDemo(formId);
+      remember(f.form_id, f, formId);
+      nav(`/forms/${f.form_id}/context`);
+    } catch (e) {
+      setError(errorMessage(e));
+      setBusy(null);
+    }
+  }
+
+  async function readPasted(text: string) {
+    setBusy("paste");
+    setError(null);
+    try {
+      const f = await api.createPaste(text);
+      remember(f.form_id, f);
       nav(`/forms/${f.form_id}/context`);
     } catch (e) {
       setError(errorMessage(e));
@@ -37,6 +52,7 @@ export default function Start() {
     setError(null);
     try {
       const forms = await api.upload(file);
+      remember(forms[0].form_id, forms[0]);
       nav(`/forms/${forms[0].form_id}/context`);
     } catch (e) {
       setError(errorMessage(e));
@@ -79,7 +95,7 @@ export default function Start() {
               </option>
             ))}
           </select>
-          <button type="button" className="ghost sm" onClick={() => void openSample()} disabled={!sample || busy !== null}>
+          <button type="button" className="ghost sm" onClick={() => void openForm(sample)} disabled={!sample || busy !== null}>
             {busy === "sample" ? "Opening…" : "Open"}
           </button>
         </div>
@@ -111,6 +127,14 @@ export default function Start() {
             purpose_text, retention_days, system_destination, third_party_shared</code>
           </div>
         </div>
+
+        <ConnectorRow
+          demos={demos}
+          apiKeySet={Boolean(health?.api_key_set)}
+          busy={busy !== null}
+          onOpenForm={(id) => void openForm(id)}
+          onPaste={(text) => void readPasted(text)}
+        />
 
         <p className="tiny faint" style={{ textAlign: "center", marginTop: ".9rem" }}>
           {aiReady ? `Assessment runs on ${health?.model}.` : "AI not configured — you still get the deterministic compliance checks."}

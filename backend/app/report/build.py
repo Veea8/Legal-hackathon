@@ -137,7 +137,7 @@ _MODIFIER_TASK = {
 }
 
 
-def _pretty_date(iso: str) -> str:
+def pretty_date(iso: str) -> str:
     try:
         return datetime.strptime(iso, "%Y-%m-%d").strftime("%d %B %Y").lstrip("0")
     except ValueError:
@@ -173,7 +173,7 @@ def representative_tasks(report: Report) -> list[dict[str, str]]:
                 "label": r.label,
                 "field_id": r.field_id,
                 "action": "expire",
-                "task": f"Set up deletion after {r.retention_days} days. Data collected today has to be deleted by {_pretty_date(r.delete_by)}.",
+                "task": f"Set up deletion after {r.retention_days} days. Data collected today has to be deleted by {pretty_date(r.delete_by)}.",
                 "kind": "retention",
             })
     for r in report.rows:
@@ -188,7 +188,7 @@ def representative_tasks(report: Report) -> list[dict[str, str]]:
     return tasks
 
 
-_TASK_BADGE = {
+TASK_BADGE = {
     "remove": "Remove", "make_optional": "Make optional", "better_explain": "Add explanation",
     "expire": "Deletion deadline", "signoff": "Needs sign-off",
 }
@@ -221,7 +221,7 @@ def render_html(report: Report) -> str:
         f"{' &middot; ' + e(r.original_category) if r.original_category else ''}</div></td>"
         f"<td><span class='pill p-{r.action.value}'>{_ACTION_LABEL[r.action.value]}</span>"
         f"{('<div class=sub>+ ' + e(', '.join(m.value for m in r.modifiers)) + '</div>') if r.modifiers else ''}"
-        f"{('<div class=sub>Delete by ' + e(_pretty_date(r.delete_by)) + '</div>') if r.delete_by else ''}</td>"
+        f"{('<div class=sub>Delete by ' + e(pretty_date(r.delete_by)) + '</div>') if r.delete_by else ''}</td>"
         f"<td>{e(r.reason)}"
         f"{('<div class=warn>' + e(r.warning) + '</div>') if r.warning else ''}</td>"
         f"<td class='sub'>{_refs_html(r.kb_refs) }</td>"
@@ -233,7 +233,7 @@ def render_html(report: Report) -> str:
     nlc = "".join(f"<li>{e(x)}</li>" for x in report.no_longer_collected) or "<li class='sub'>None &mdash; every field stays.</li>"
 
     deadline_rows = "".join(
-        f"<tr><td>{e(r.label)}</td><td>{r.retention_days} days</td><td><b>{e(_pretty_date(r.delete_by))}</b></td></tr>"
+        f"<tr><td>{e(r.label)}</td><td>{r.retention_days} days</td><td><b>{e(pretty_date(r.delete_by))}</b></td></tr>"
         for r in report.rows if r.delete_by
     ) or "<tr><td colspan='3' class='sub'>No deletion deadline set for any field.</td></tr>"
 
@@ -242,7 +242,7 @@ def render_html(report: Report) -> str:
             f"<li class='task k-{t['kind']}'>"
             f"<span class='chk' aria-hidden='true'></span>"
             f"<span class='t-body'><span class='t-head'><b>{e(t['label'])}</b>"
-            f"<span class='pill p-{t['action']}'>{_TASK_BADGE[t['action']]}</span></span>"
+            f"<span class='pill p-{t['action']}'>{TASK_BADGE[t['action']]}</span></span>"
             f"<span class='t-do'>{e(t['task'])}</span></span></li>"
         )
 
