@@ -48,7 +48,7 @@ const STEPS: Step[] = [
   },
   {
     page: "review",
-    target: ".legend-wrap",
+    target: ".decision-tabs",
     eyebrow: "Spot the risk instantly",
     title: "See your whole form's risk at a glance.",
     body: (
@@ -119,6 +119,14 @@ function pathFor(page: Page, formId: string | null): string | null {
 
 function click(selector: string) {
   document.querySelector<HTMLElement>(selector)?.click();
+}
+
+/** Open a field so the drawer steps have something to point at. */
+function openFieldRow() {
+  const row = document.querySelector<HTMLElement>(".field-row");
+  if (row) return row.click();
+  // No rows on screen: the open bucket is empty, so open another one and try again next poll.
+  document.querySelector<HTMLElement>(".decision-tab:not(.active)")?.click();
 }
 
 /** How long the highlight takes to glide from one element to the next. */
@@ -225,12 +233,15 @@ export default function Onboarding({ onClose }: { onClose: () => void }) {
     function find() {
       if (cancelled) return;
       const drawerOpen = document.querySelector(".drawer") !== null;
-      if (s.drawer && !drawerOpen) click(".field-row .f-open");
+      if (s.drawer && !drawerOpen) openFieldRow();
       if (!s.drawer && drawerOpen) click(".drawer-close");
 
       const el = document.querySelector<HTMLElement>(s.target);
       if (el && drawerOpen === Boolean(s.drawer)) return follow(el);
-      if (Date.now() - started > WAIT_MS) return setStatus("lost");
+      if (Date.now() - started > WAIT_MS) {
+        shown.current = null;
+        return setStatus("lost");
+      }
       poll = window.setTimeout(find, 120);
     }
 

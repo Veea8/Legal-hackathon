@@ -1,4 +1,4 @@
-"""Form sessions, shared through Redis on Vercel and kept in memory locally."""
+"""Form sessions, shared through Redis on Vercel and kept in memory (and on disk) locally."""
 
 from __future__ import annotations
 
@@ -6,10 +6,17 @@ import json
 import os
 import uuid
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
+from pathlib import Path
 from typing import Optional
 
 from app.models import CheckResult, DeliveryRecord, FormSchema, MinimisedForm, Report, RuleSet
+
+# Locally the sessions also go to disk: restarting uvicorn (or reloading on a file save) used to
+# lose every open form, and the UI could only answer "Unknown form '<id>'" when a decision was
+# confirmed. Redis owns the sessions wherever it is configured; this only backs the in-memory dict.
+SESSION_DIR = Path(os.getenv("SESSION_DIR") or Path(__file__).resolve().parents[1] / ".sessions")
+SESSION_TTL = timedelta(hours=24)
 
 
 @dataclass
@@ -51,6 +58,20 @@ class Store:
     @staticmethod
     def _key(sid: str) -> str:
         return f"minima:session:{sid}"
+
+    @staticmethod
+    def _encode(session: Session) -> dict:
+        return {
+            "id": session.id,
+            "schema": session.schema.model_dump(mode="json"),
+            "demo_form_id": session.demo_form_id,
+            "checks": [c.model_dump(mode="json") for c in session.checks],
+            "ruleset": session.ruleset.model_dump(mode="json") if session.ruleset else None,
+            "minimised": session.minimised.model_dump(mode="json") if session.minimised else None,
+            "report": session.report.model_dump(mode="json") if session.report else None,
+            "deliveries": [d.model_dump(mode="json") for d in session.deliveries],
+            "created_at": session.created_at.isoformat(),
+        }
 
     @staticmethod
     def _decode(raw) -> Session:
