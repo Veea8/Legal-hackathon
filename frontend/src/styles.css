@@ -384,6 +384,11 @@ button.block { width: 100%; }
 .review-eyebrow { margin: 0 0 .55rem; }
 .review-submit { display: grid; justify-items: end; gap: .45rem; flex: none; }
 .submit-hint { color: var(--decide); font-size: .75rem; font-weight: 540; }
+button.submit-hint {
+  background: none; border: none; padding: 0; color: var(--decide);
+  text-decoration: underline; text-underline-offset: 2px; cursor: pointer;
+}
+button.submit-hint:hover { background: none; color: var(--remove); }
 
 .review-summary {
   display: grid; grid-template-columns: minmax(15rem, 1.5fr) 1fr 1fr; margin-bottom: 1rem;

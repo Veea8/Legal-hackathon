@@ -155,6 +155,37 @@ export default function Review() {
     [bucketed],
   );
 
+  /* A field needing sign-off can sit in any bucket — a "remove" the AI wants milder, for example.
+     The tab filter used to hide those behind an empty Review list while the header still asked for
+     them, so the two pointers below always aim at a field that exists. */
+  const bucketOf = useCallback(
+    (fieldId: string): BucketKey =>
+      BUCKETS.find((bucket) => (bucketed.get(bucket.key) ?? []).some((field) => field.field_id === fieldId))?.key ?? "review",
+    [bucketed],
+  );
+
+  const firstUnresolved = useMemo(
+    () => flatOrder.find((fieldId) => {
+      const field = schema?.fields.find((candidate) => candidate.field_id === fieldId);
+      return field ? isUnresolved(ruleById.get(fieldId), checkById.get(fieldId)) : false;
+    }) ?? null,
+    [flatOrder, schema, ruleById, checkById],
+  );
+
+  const goToPending = useCallback(() => {
+    if (!firstUnresolved) return;
+    setActiveBucket(bucketOf(firstUnresolved));
+    setSelected(firstUnresolved);
+  }, [firstUnresolved, bucketOf]);
+
+  // Once the assessment lands, open the bucket that actually holds the first decision.
+  const jumped = useRef(false);
+  useEffect(() => {
+    if (jumped.current || !ruleset || ruleset.status === "running" || !firstUnresolved) return;
+    jumped.current = true;
+    setActiveBucket(bucketOf(firstUnresolved));
+  }, [ruleset, firstUnresolved, bucketOf]);
+
   async function applyRules() {
     setBusy(true);
     setError(null);
@@ -205,7 +236,11 @@ export default function Review() {
           <button type="button" onClick={() => void applyRules()} disabled={busy || running || unresolved > 0}>
             {busy ? "Applying…" : "Apply and export →"}
           </button>
-          {!running && unresolved > 0 && <span className="submit-hint">Review {unresolved} field{unresolved === 1 ? "" : "s"} to continue</span>}
+          {!running && unresolved > 0 && (
+            <button type="button" className="submit-hint" onClick={goToPending}>
+              Review {unresolved} field{unresolved === 1 ? "" : "s"} to continue
+            </button>
+          )}
         </div>
       </header>
 
@@ -255,7 +290,14 @@ export default function Review() {
               </header>
               <div className="field-list">
                 {(bucketed.get(activeBucket) ?? []).length === 0 ? (
-                  <p className="empty-bucket">No fields in this section.</p>
+                  <p className="empty-bucket">
+                    No fields in this section.{" "}
+                    {firstUnresolved && (
+                      <button type="button" className="link" onClick={goToPending}>
+                        The {unresolved} open decision{unresolved === 1 ? " is" : "s are"} under {BUCKETS.find((bucket) => bucket.key === bucketOf(firstUnresolved))?.title}.
+                      </button>
+                    )}
+                  </p>
                 ) : (
                   (bucketed.get(activeBucket) ?? []).map((field) => {
                       const rule = ruleById.get(field.field_id);

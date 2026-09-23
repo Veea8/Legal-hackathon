@@ -10,6 +10,14 @@ import pytest
 
 
 @pytest.fixture(autouse=True)
+def isolated_sessions(monkeypatch, tmp_path):
+    """Session files go to a tmp dir, never into backend/.sessions."""
+    from app import store as store_module
+
+    monkeypatch.setattr(store_module, "SESSION_DIR", tmp_path / "sessions")
+
+
+@pytest.fixture(autouse=True)
 def no_live_ai(monkeypatch):
     """The suite never calls Apertus.
 

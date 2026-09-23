@@ -47,7 +47,15 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   } catch {
     body = text;
   }
-  if (!res.ok) throw new ApiError(res.status, detailOf(body, `${res.status} ${res.statusText}`));
+  if (!res.ok) {
+    const detail = detailOf(body, `${res.status} ${res.statusText}`);
+    // "Unknown form '<id>'" means the server no longer holds this session. An id is no use to
+    // the person reading it; say what happened and what to do.
+    if (res.status === 404 && detail.startsWith("Unknown form")) {
+      throw new ApiError(404, "This form is no longer open on the server. Start it again from “New form”.");
+    }
+    throw new ApiError(res.status, detail);
+  }
   return body as T;
 }
 

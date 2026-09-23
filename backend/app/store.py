@@ -96,28 +96,52 @@ class Store:
         await self.save(s)
         return s
 
+    # -- local disk mirror -------------------------------------------------
+
+    @staticmethod
+    def _path(sid: str) -> Path:
+        return SESSION_DIR / f"{sid}.json"
+
+    def _write_disk(self, session: Session) -> None:
+        try:
+            SESSION_DIR.mkdir(parents=True, exist_ok=True)
+            tmp = self._path(session.id).with_suffix(".tmp")
+            tmp.write_text(json.dumps(self._encode(session)), encoding="utf-8")
+            tmp.replace(self._path(session.id))
+        except OSError:
+            pass  # read-only filesystem: memory still holds the session for this process
+
+    def _read_disk(self, sid: str) -> Optional[Session]:
+        path = self._path(sid)
+        try:
+            session = self._decode(path.read_text(encoding="utf-8"))
+        except (OSError, ValueError, KeyError):
+            return None
+        if datetime.now(timezone.utc) - session.created_at > SESSION_TTL:
+            path.unlink(missing_ok=True)
+            return None
+        return session
+
+    # ----------------------------------------------------------------------
+
     async def save(self, session: Session) -> None:
         redis = self._redis()
         if redis is None:
             self._sessions[session.id] = session
+            self._write_disk(session)
             return
-        data = {
-            "id": session.id,
-            "schema": session.schema.model_dump(mode="json"),
-            "demo_form_id": session.demo_form_id,
-            "checks": [c.model_dump(mode="json") for c in session.checks],
-            "ruleset": session.ruleset.model_dump(mode="json") if session.ruleset else None,
-            "minimised": session.minimised.model_dump(mode="json") if session.minimised else None,
-            "report": session.report.model_dump(mode="json") if session.report else None,
-            "deliveries": [d.model_dump(mode="json") for d in session.deliveries],
-            "created_at": session.created_at.isoformat(),
-        }
+        data = self._encode(session)
         await redis.set(self._key(session.id), json.dumps(data), exat=int(session.created_at.timestamp()) + 86400)
 
     async def get(self, sid: str) -> Optional[Session]:
         redis = self._redis()
         if redis is None:
-            return self._sessions.get(sid)
+            session = self._sessions.get(sid)
+            if session is None:
+                session = self._read_disk(sid)
+                if session is not None:
+                    self._sessions[sid] = session
+            return session
         raw = await redis.get(self._key(sid))
         return self._decode(raw) if raw is not None else None
 

@@ -6,7 +6,7 @@
 ._*
 
 # Custom folder icons
-Icon
+Icon
 
 # Volume root files
 .DocumentRevisions-V100
@@ -32,6 +32,7 @@ $RECYCLE.BIN/
 ### Project
 backend/.env
 backend/.venv/
+backend/.sessions/
 __pycache__/
 *.pyc
 .pytest_cache/
