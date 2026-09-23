@@ -236,7 +236,6 @@ button.block { width: 100%; }
 }
 .dropzone .dz-title { font-size: 1.02rem; font-weight: 580; letter-spacing: -.01em; }
 .dropzone .dz-sub { font-size: .87rem; color: var(--muted); }
-.dropzone .dz-hint { font-size: .76rem; color: var(--faint); margin-top: .9rem; max-width: 28rem; line-height: 1.5; }
 
 .sample-bar {
   display: flex; align-items: center; gap: .55rem; flex-wrap: wrap;
@@ -582,6 +581,56 @@ button.block { width: 100%; }
 .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; align-items: start; }
 ul.plain { padding-left: 1.1rem; margin: .3rem 0; }
 ul.plain li { margin: .3rem 0; font-size: .89rem; }
+
+/* ---------------------------------------------------------------- onboarding */
+
+.topnav button.navlink {
+  background: none; border: none; color: var(--muted); font-size: .87rem; font-weight: 500;
+  padding: .32rem .6rem; border-radius: 7px;
+}
+.topnav button.navlink:hover { background: var(--surface-2); color: var(--ink); }
+
+/* The tour sits above everything, drawer included (z 50). The block layer swallows clicks;
+   the spotlight is a padded box whose enormous shadow dims the rest of the page. */
+.tour-block { position: fixed; inset: 0; z-index: 70; transition: background .25s; }
+.tour-block.dim { background: rgba(16, 18, 26, .45); }
+.tour-spot {
+  position: fixed; z-index: 71; pointer-events: none; border-radius: var(--r);
+  box-shadow: 0 0 0 3px var(--accent), 0 0 0 9999px rgba(16, 18, 26, .45);
+  display: none; /* shown and moved frame by frame from Onboarding.tsx: no CSS transition here, it would lag */
+}
+/* Room for the sticky top bar when a highlighted element is scrolled to the top. */
+.tour-target { scroll-margin-top: 5.5rem; }
+
+.ob {
+  position: fixed; z-index: 72; background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--r-lg); box-shadow: var(--shadow-lg); overflow: hidden;
+  animation: rise .3s cubic-bezier(.22, 1, .36, 1);
+}
+@keyframes rise { from { transform: translateY(.75rem); opacity: 0 } to { transform: none; opacity: 1 } }
+.ob-head { display: flex; align-items: center; gap: .5rem; padding: .8rem .75rem 0 1.1rem; }
+.ob-head .eyebrow { margin: 0; }
+.ob-body { padding: .5rem 1.1rem 1rem; animation: fade .25s ease-out; }
+@keyframes fade { from { opacity: 0 } to { opacity: 1 } }
+.ob-body h2 { font-size: 1.08rem; margin: 0 0 .4rem; }
+.ob-body p { color: var(--ink-2); font-size: .9rem; }
+.ob-badges { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .9rem; }
+.ob-list { list-style: none; padding: 0; margin: .5rem 0 .2rem; color: var(--ink-2); font-size: .9rem; }
+.ob-list li { position: relative; padding-left: 1.4rem; margin: .35rem 0; }
+.ob-list li::before {
+  content: "✓"; position: absolute; left: 0; top: .1rem;
+  width: 1rem; height: 1rem; border-radius: 999px; display: grid; place-items: center;
+  font-size: .62rem; font-weight: 700; color: var(--accent); background: var(--accent-soft);
+}
+.ob-list b { color: var(--ink); font-weight: 600; }
+.ob-foot {
+  display: flex; align-items: center; gap: .5rem; padding: .65rem 1.1rem;
+  border-top: 1px solid var(--line); background: var(--surface-2);
+}
+.ob-dots { display: flex; gap: .35rem; }
+.ob-dots i { width: .45rem; height: .45rem; border-radius: 999px; background: var(--line-strong); transition: width .2s, background .2s; }
+.ob-dots i.past { background: var(--accent-line); }
+.ob-dots i.on { width: 1.2rem; background: var(--accent); }
 
 /* ---------------------------------------------------------------- responsive */
 
