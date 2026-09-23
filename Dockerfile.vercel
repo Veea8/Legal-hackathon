@@ -15,4 +15,7 @@ COPY data/ data/
 COPY --from=web /web/dist frontend/dist
 WORKDIR /srv/backend
 EXPOSE 80
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80"]
+# Shell form on purpose: the host injects $PORT, and the exec form would not expand it.
+# --proxy-headers so request URLs are right behind Vercel's proxy.
+CMD uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-80} --proxy-headers --forwarded-allow-ips='*'
+
